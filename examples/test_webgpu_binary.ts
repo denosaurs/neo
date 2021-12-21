@@ -1,6 +1,6 @@
 import { WebGPUBackend } from "../backend/webgpu/backend.ts";
 import { WebGPUData } from "../backend/webgpu/data.ts";
-import { add, sub, mul, div } from "../backend/webgpu/operators/binary.ts";
+import { add, div, mul, sub } from "../backend/webgpu/operators/binary.ts";
 
 const backend = new WebGPUBackend();
 await backend.initialize();

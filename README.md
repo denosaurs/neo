@@ -5,7 +5,8 @@
 [![Dependencies](https://img.shields.io/github/workflow/status/denosaurs/neo/depsbot?label=dependencies)](https://github.com/denosaurs/depsbot)
 [![License](https://img.shields.io/github/license/denosaurs/neo)](https://github.com/denosaurs/neo/blob/master/LICENSE)
 
-`neo` is a module for working with matrices and other linear algebra, accelerated using WebGPU.
+`neo` is a module for working with matrices and other linear algebra,
+accelerated using WebGPU.
 
 ## Maintainers
 
