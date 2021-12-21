@@ -1,6 +1,6 @@
 import { DataType } from "../../types.ts";
 
-export const matmul = (type: DataType) => `
+export const matmul = (type: DataType): string => `
 [[block]]
 struct Meta {
   m: u32;

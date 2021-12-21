@@ -1,6 +1,6 @@
 import { DataType } from "../../types.ts";
 
-export const unary = (type: DataType, expr: string) => `
+export const unary = (type: DataType, expr: string): string => `
 [[block]]
 struct Data {
   values: array<${type}>;

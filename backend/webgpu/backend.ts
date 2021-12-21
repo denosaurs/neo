@@ -11,16 +11,12 @@ export class WebGPUBackend implements Backend {
   device!: GPUDevice;
   pipelines: Map<string, [GPUComputePipeline, GPUBindGroupLayout]> = new Map();
 
-  async initialize(options?: GPURequestAdapterOptions) {
+  async initialize(options?: GPURequestAdapterOptions): Promise<void> {
     if (this.initalized) {
       return;
     }
 
-    let adapter = null;
-    try {
-      adapter = await navigator.gpu.requestAdapter(options);
-      // deno-lint-ignore no-empty
-    } catch {}
+    const adapter = await navigator.gpu.requestAdapter(options) || null;
 
     if (adapter === null) {
       this.supported = false;

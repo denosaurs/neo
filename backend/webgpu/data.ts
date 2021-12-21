@@ -64,7 +64,7 @@ export class WebGPUData<T extends DataType = DataType> implements Data<T> {
   }
 
   // deno-lint-ignore require-await
-  async set(data: DataArray<T>) {
+  async set(data: DataArray<T>): Promise<void> {
     // const buffer = this.buffer.getMappedRange();
     // const target = new DataArrayConstructor[this.type](buffer);
     // target.set(data);
@@ -89,7 +89,7 @@ export class WebGPUData<T extends DataType = DataType> implements Data<T> {
     ) as DataArray<T>;
   }
 
-  dispose() {
+  dispose(): void {
     this.buffer.destroy();
   }
 }

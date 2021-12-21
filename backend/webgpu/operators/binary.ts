@@ -37,3 +37,4 @@ export const max = binary("return max(a, b);");
 export const prelu = binary<"f32" | "i32">((type) =>
   `if (a < 0${type}) { return b * a; }  return a;`
 );
+export const sigmoid = binary(`return 1/(1+pow(2.718281828459045,-a)`)
