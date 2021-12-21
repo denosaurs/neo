@@ -3,7 +3,7 @@
 [![Tags](https://img.shields.io/github/release/denosaurs/neo)](https://github.com/denosaurs/neo/releases)
 [![CI Status](https://img.shields.io/github/workflow/status/denosaurs/neo/check)](https://github.com/denosaurs/neo/actions)
 [![Dependencies](https://img.shields.io/github/workflow/status/denosaurs/neo/depsbot?label=dependencies)](https://github.com/denosaurs/depsbot)
-[![License](https://img.shields.io/github/license/denosaurs/neo)](https://github.com/denosaurs/neo/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/denosaurs/neo)](https://github.com/denosaurs/neo/blob/main/LICENSE)
 
 `neo` is a module for working with matrices and other linear algebra,
 accelerated using WebGPU.
