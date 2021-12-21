@@ -17,6 +17,7 @@ export class WebGPUBackend implements Backend {
     }
 
     let adapter = null;
+
     try {
       adapter = await navigator.gpu.requestAdapter(options);
       // deno-lint-ignore no-empty
