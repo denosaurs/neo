@@ -14,11 +14,11 @@ struct Data {
 };
 
 [[group(0), binding(0)]]
-var<storage, read> a_data: Data;
+var<storage, read> a: Data;
 [[group(0), binding(1)]]
-var<storage, read> b_data: Data;
+var<storage, read> b: Data;
 [[group(0), binding(2)]]
-var<storage, write> c_data: Data;
+var<storage, write> c: Data;
 [[group(0), binding(3)]]
 var<storage, read> meta: Meta;
 
@@ -30,8 +30,8 @@ fn main([[builtin(global_invocation_id)]] global_id: vec3<u32>) {
 
   var sum = 0${type};
   for (var k = 0u; k < meta.k; k = k + 1u) {
-    sum = sum + a_data.values[global_id.y * meta.k + k] * b_data.values[k * meta.n + global_id.x];
+    sum = sum + a.values[global_id.y * meta.k + k] * b.values[k * meta.n + global_id.x];
   }
-  c_data.values[global_id.x + global_id.y * meta.n] = sum;
+  c.values[global_id.x + global_id.y * meta.n] = sum;
 }
 `;
