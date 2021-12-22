@@ -21,7 +21,7 @@ export function binary<T extends DataType>(
     await backend.execute({
       pipeline,
       data: [a, b, c],
-      workgroups: [Math.ceil(a.length / 8)],
+      workgroups: [128],
     });
   };
 }

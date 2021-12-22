@@ -20,7 +20,7 @@ export function unary<T extends DataType>(
     await backend.execute({
       pipeline,
       data: [a, b],
-      workgroups: [Math.ceil(a.length / 8)],
+      workgroups: [128],
     });
   };
 }
