@@ -33,9 +33,9 @@ export class WebGPUBackend implements Backend {
     this.device = await adapter.requestDevice();
   }
 
-  async register(label: string, code: string) {
-    if (this.pipelines.has(label)) {
-      return;
+  async register(code: string): Promise<string> {
+    if (this.pipelines.has(code)) {
+      return code;
     }
 
     const module = this.device.createShaderModule({ code });
@@ -44,7 +44,8 @@ export class WebGPUBackend implements Backend {
     });
     const layout = pipeline.getBindGroupLayout(0);
 
-    this.pipelines.set(label, [pipeline, layout]);
+    this.pipelines.set(code, [pipeline, layout]);
+    return code;
   }
 
   // deno-lint-ignore require-await

@@ -15,11 +15,10 @@ export function unary<T extends DataType>(
     b: WebGPUData<T>,
   ) {
     const type = ensureType(a.type, b.type);
-    const label = `unary_${expr}_${type}`;
-    await backend.register(label, shader(type, exprfn(type)));
+    const pipeline = await backend.register(shader(type, exprfn(type)));
 
     await backend.execute({
-      pipeline: label,
+      pipeline,
       data: [a, b],
       workgroups: [Math.ceil(a.length / 8)],
     });
@@ -59,3 +58,10 @@ export const elu = unary<"f32">(`
   } 
   return (exp(a) - 1.0);
 `);
+export const log = unary<"f32">(`
+  if (a < 0.0) {
+    return 1.0 / 0.0;
+  }
+  return log(a);
+`);
+// export const leakyrelu = unary<"f32" | "i32">((type) => `if (a < 0${type}) { return uniforms.alpha * a; } return a;`);

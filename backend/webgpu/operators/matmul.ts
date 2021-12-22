@@ -12,13 +12,12 @@ export async function matmul<T extends DataType>(
   { m, n, k }: { m: number; n: number; k: number },
 ) {
   const type = ensureType(a.type, b.type, c.type);
-  const label = `matmul_${type}`;
-  await backend.register(label, shader(type));
+  const pipeline = await backend.register(shader(type));
 
   const meta = await WebGPUData.from(backend, new Uint32Array([m, n, k]));
 
   await backend.execute({
-    pipeline: label,
+    pipeline,
     data: [a, b, c, meta],
     workgroups: [Math.ceil(n / 8), Math.ceil(m / 8), 1],
   });

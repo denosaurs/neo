@@ -16,11 +16,10 @@ export function binary<T extends DataType>(
     c: WebGPUData<T>,
   ) {
     const type = ensureType(a.type, b.type, c.type);
-    const label = `binary_${expr}_${type}`;
-    await backend.register(label, shader(type, exprfn(type)));
+    const pipeline = await backend.register(shader(type, exprfn(type)));
 
     await backend.execute({
-      pipeline: label,
+      pipeline,
       data: [a, b, c],
       workgroups: [Math.ceil(a.length / 8)],
     });
