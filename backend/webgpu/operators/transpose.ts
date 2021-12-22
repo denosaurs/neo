@@ -12,12 +12,15 @@ export async function transpose<T extends DataType>(
 ) {
   const type = ensureType(a.type, b.type);
   const pipeline = await backend.register(shader(type));
-
-  const meta = await WebGPUData.from(backend, new Uint32Array([w, h]));
+  const uniform = await WebGPUData.from(
+    backend,
+    new Uint32Array([w, h]),
+    GPUBufferUsage.COPY_DST | GPUBufferUsage.UNIFORM,
+  );
 
   await backend.execute({
     pipeline,
-    data: [a, b, meta],
+    data: [a, b, uniform],
     workgroups: [Math.ceil(w / 8), Math.ceil(h / 8), 1],
   });
 }

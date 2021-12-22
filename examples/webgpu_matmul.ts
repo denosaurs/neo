@@ -5,18 +5,18 @@ import { matmul } from "../backend/webgpu/operators/matmul.ts";
 const backend = new WebGPUBackend();
 await backend.initialize();
 
-const meta = { m: 2, n: 2, k: 2, alpha: 1 };
+const uniform = { m: 2, n: 2, k: 2, alpha: 1 };
 
 const a = await WebGPUData.from(
   backend,
-  new Float32Array(meta.m * meta.k).fill(2),
+  new Float32Array(uniform.m * uniform.k).fill(2),
 );
 const b = await WebGPUData.from(
   backend,
-  new Float32Array(meta.n * meta.k).fill(2),
+  new Float32Array(uniform.n * uniform.k).fill(2),
 );
-const c = new WebGPUData(backend, "f32", meta.m * meta.n);
+const c = new WebGPUData(backend, "f32", uniform.m * uniform.n);
 
-await matmul(backend, a, b, c, meta);
+await matmul(backend, a, b, c, uniform);
 
 console.log(await c.get());

@@ -13,12 +13,15 @@ export async function matmul<T extends DataType>(
 ) {
   const type = ensureType(a.type, b.type, c.type);
   const pipeline = await backend.register(shader(type));
-
-  const meta = await WebGPUData.from(backend, new Uint32Array([m, n, k]));
+  const uniform = await WebGPUData.from(
+    backend,
+    new Uint32Array([m, n, k]),
+    GPUBufferUsage.COPY_DST | GPUBufferUsage.UNIFORM,
+  );
 
   await backend.execute({
     pipeline,
-    data: [a, b, c, meta],
+    data: [a, b, c, uniform],
     workgroups: [Math.ceil(n / 8), Math.ceil(m / 8), 1],
   });
 }

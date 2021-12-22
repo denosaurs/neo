@@ -1,5 +1,4 @@
-import { BackendRequest, DataType, Operator } from "../types.ts";
-import { WebGPUBackend } from "./backend.ts";
+import { BackendRequest, DataType } from "../types.ts";
 import { WebGPUData } from "./data.ts";
 
 export type Workgroups =
@@ -13,8 +12,3 @@ export interface WebGPUBackendRequest<T extends DataType = DataType>
   data: WebGPUData<T>[];
   workgroups: Workgroups;
 }
-
-export type WebGPUOperator<T extends DataType = DataType> = Operator<T> & {
-  backend: WebGPUBackend;
-  data: WebGPUData<T>[];
-};
