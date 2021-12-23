@@ -1,6 +1,9 @@
 import { DataType } from "../../types.ts";
+import { fmtType } from "../../util.ts";
 
-export const binary = (type: DataType, expr: string) => `
+export const binary = (dataType: DataType, expr: string) => {
+  const type = fmtType(dataType)
+  return `
 [[block]]
 struct Data {
   values: array<${type}>;
@@ -21,4 +24,4 @@ fn binary(a: ${type}, b: ${type}) -> ${type} {
 fn main([[builtin(global_invocation_id)]] global_id: vec3<u32>) {
   c_data.values[global_id.x] = binary(a_data.values[global_id.x], b_data.values[global_id.x]);
 }
-`;
+`};

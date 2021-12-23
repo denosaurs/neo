@@ -1,6 +1,9 @@
 import { DataType } from "../../types.ts";
+import { fmtType } from "../../util.ts";
 
-export const transpose = (type: DataType) => `
+export const transpose = (dataType: DataType) => {
+  const type = fmtType(dataType)
+  return `
 [[block]]
 struct Meta {
   w: u32;
@@ -27,4 +30,4 @@ fn main([[builtin(global_invocation_id)]] global_id: vec3<u32>) {
 
   b_data.values[global_id.y + global_id.x * meta.h] = a_data.values[global_id.x + global_id.y * meta.w];
 }
-`;
+`};

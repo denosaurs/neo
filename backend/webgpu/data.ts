@@ -1,4 +1,5 @@
 import { Data, DataArray, DataArrayConstructor, DataType } from "../types.ts";
+import { getType } from "../util.ts";
 import { WebGPUBackend } from "./backend.ts";
 
 export interface WebGPUData<T extends DataType = DataType> extends Data<T> {
@@ -32,9 +33,10 @@ export class WebGPUData<T extends DataType = DataType> implements Data<T> {
   static async from<T extends DataType>(
     backend: WebGPUBackend,
     source: DataArray<T>,
+    type?: T
   ): Promise<WebGPUData<T>> {
     // deno-fmt-ignore
-    const type = (
+    type = type || (
         source instanceof Uint32Array ? "u32"
       : source instanceof Int32Array ? "i32"
       : source instanceof Float32Array ? "f32"
@@ -55,7 +57,7 @@ export class WebGPUData<T extends DataType = DataType> implements Data<T> {
     this.backend = backend;
     this.type = type;
     this.length = length;
-    this.size = this.length * DataArrayConstructor[type].BYTES_PER_ELEMENT;
+    this.size = this.length * DataArrayConstructor[getType(type)].BYTES_PER_ELEMENT;
 
     this.buffer = this.backend.device.createBuffer({
       size: this.size,
@@ -84,7 +86,7 @@ export class WebGPUData<T extends DataType = DataType> implements Data<T> {
 
     await staging.mapAsync(GPUMapMode.READ);
 
-    return new DataArrayConstructor[this.type](
+    return new DataArrayConstructor[getType(this.type)](
       staging.getMappedRange().slice(0),
     ) as DataArray<T>;
   }
