@@ -17,9 +17,9 @@ struct Data {
 };
 
 [[group(0), binding(0)]]
-var<storage, read> a_data: Data;
+var<storage, read> a: Data;
 [[group(0), binding(1)]]
-var<storage, write> b_data: Data;
+var<storage, write> b: Data;
 [[group(0), binding(2)]]
 var<storage, read> meta: Meta;
 
@@ -29,6 +29,6 @@ fn main([[builtin(global_invocation_id)]] global_id: vec3<u32>) {
     return;
   }
 
-  b_data.values[global_id.x + global_id.y * meta.n] = a_data.values[global_id.x + global_id.y * meta.w];
+  b.values[global_id.x + global_id.y * meta.n] = a.values[global_id.x + global_id.y * meta.w];
 }
 `};

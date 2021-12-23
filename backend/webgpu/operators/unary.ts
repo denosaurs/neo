@@ -20,7 +20,7 @@ export function unary<T extends DataType>(
     await backend.execute({
       pipeline,
       data: [a, b],
-      workgroups: [Math.ceil(a.length / 8)],
+      workgroups: [128],
     });
   };
 }
@@ -28,7 +28,10 @@ export function unary<T extends DataType>(
 export const abs = unary("return abs(a);");
 export const linear = unary("return a;");
 export const neg = unary("return -a;");
+export const inc = unary("return a = a + 1;");
+export const dec = unary("return a = a - 1;");
 export const relu = unary<"f32" | "i32">((type) => `return max(a, 0${type});`);
+export const relu6 = unary<"f32" | "i32">((type) => `return clamp(a, 0${type}, 6${type});`);
 export const ceil = unary<"f32">("return ceil(a);");
 export const floor = unary<"f32">("return floor(a);");
 export const round = unary<"f32">("return round(a);");
