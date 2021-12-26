@@ -1,6 +1,15 @@
+import { enableValidationErrors } from "../../deps.ts";
 import { webgpu } from "../../util.ts";
-import { Backend } from "../types.ts";
-import { WebGPUBackendRequest } from "./types.ts";
+import { Backend, BackendRequest, DataType } from "../types.ts";
+import { WebGPUData } from "./data.ts";
+import { Workgroups } from "./types.ts";
+
+export interface WebGPUBackendRequest<T extends DataType = DataType>
+  extends BackendRequest<T> {
+  pipeline: string;
+  data: WebGPUData<T>[];
+  workgroups: Workgroups;
+}
 
 export class WebGPUBackend implements Backend {
   type = "webgpu" as const;
@@ -11,7 +20,7 @@ export class WebGPUBackend implements Backend {
   device!: GPUDevice;
   pipelines: Map<string, [GPUComputePipeline, GPUBindGroupLayout]> = new Map();
 
-  async initialize(options?: GPURequestAdapterOptions) {
+  async initialize(options?: GPURequestAdapterOptions): Promise<void> {
     if (this.initalized) {
       return;
     }
@@ -31,6 +40,8 @@ export class WebGPUBackend implements Backend {
     this.initalized = true;
     this.adapter = adapter;
     this.device = await adapter.requestDevice();
+    
+    enableValidationErrors(this.device, true);
   }
 
   async register(code: string): Promise<string> {

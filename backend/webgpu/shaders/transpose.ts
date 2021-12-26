@@ -1,6 +1,9 @@
 import { DataType } from "../../types.ts";
+import { prelude } from "./misc.ts";
 
 export const transpose = (type: DataType) => `
+${prelude}
+
 [[block]]
 struct Uniform {
   w: u32;

@@ -1,6 +1,9 @@
 import { DataType } from "../../types.ts";
+import { prelude } from "./misc.ts";
 
 export const matmul = (type: DataType) => `
+${prelude}
+
 [[block]]
 struct Uniform {
   m: u32;

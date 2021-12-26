@@ -1,6 +1,9 @@
 import { DataType } from "../../types.ts";
+import { prelude } from "./misc.ts";
 
 export const pad = (type: DataType) => `
+${prelude}
+
 [[block]]
 struct Uniform {
   w: u32;

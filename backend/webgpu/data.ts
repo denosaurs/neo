@@ -70,7 +70,7 @@ export class WebGPUData<T extends DataType = DataType> implements Data<T> {
     ) as DataArray<T>;
   }
 
-  dispose() {
+  dispose(): void {
     this.buffer.destroy();
   }
 }

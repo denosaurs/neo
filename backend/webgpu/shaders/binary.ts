@@ -1,6 +1,9 @@
 import { DataType } from "../../types.ts";
+import { prelude } from "./misc.ts";
 
 export const binary = (type: DataType, expr: string) => `
+${prelude}
+
 [[block]]
 struct Data {
   values: array<${type}>;
