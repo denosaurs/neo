@@ -2,8 +2,10 @@ import { DataType, DataPrimitive } from "./types.ts";
 
 export function ensureType(...types: DataType[]) {
   const type = types[0];
-  if (type[0] ? types.every((value) => value[0] === type[0] && value[1] === type[1])
-    : types.every((value) => value === type)) {
+  if (
+    typeof type == "string" ? types.every((value) => value === type) :
+      types.every((value) => value[0] === type[0] && value[1] === type[1])
+  ) {
     return type;
   } else {
     throw `Expected all types to be of type ${type}`;
