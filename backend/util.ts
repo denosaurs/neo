@@ -11,9 +11,9 @@ export function ensureType(...types: DataType[]) {
 }
 
 export function getType(type: DataType): DataPrimitive {
-  return (type[1] || type) as DataPrimitive
+  return (typeof type == "string" ? type : type[1]) as DataPrimitive
 }
 
 export function fmtType(type: DataType): string {
-  return type[0] ? `${type[0]}<${type[1]}>` : type as string
+  return (typeof type == "string" ? type : `${type[0]}<${type[1]}>`) as string
 }

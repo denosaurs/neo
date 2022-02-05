@@ -1,17 +1,18 @@
 import { DataType } from "../../types.ts";
 import { fmtType } from "../../util.ts";
+import { prelude } from "./misc.ts";
 
 export const pad = (dataType: DataType) => {
   const type = fmtType(dataType)
   return `
-[[block]]
-struct Meta {
+${prelude}
+
+struct Uniform {
   w: u32;
   h: u32;
   n: u32;
 };
 
-[[block]]
 struct Data {
   values: array<${type}>;
 };
@@ -21,7 +22,7 @@ var<storage, read> a: Data;
 [[group(0), binding(1)]]
 var<storage, write> b: Data;
 [[group(0), binding(2)]]
-var<storage, read> meta: Meta;
+var<uniform> meta: Uniform;
 
 [[stage(compute), workgroup_size(8, 8, 1)]]
 fn main([[builtin(global_invocation_id)]] global_id: vec3<u32>) {

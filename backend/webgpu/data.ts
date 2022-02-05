@@ -2,26 +2,6 @@ import { Data, DataArray, DataArrayConstructor, DataType } from "../types.ts";
 import { getType } from "../util.ts";
 import { WebGPUBackend } from "./backend.ts";
 
-export interface WebGPUData<T extends DataType = DataType> extends Data<T> {
-  type: T;
-  backend: WebGPUBackend;
-  buffer: GPUBuffer;
-}
-
-export interface WebGPUDataConstructor<T extends DataType = DataType> {
-  from(
-    backend: WebGPUBackend,
-    source: DataArray<T>,
-  ): Promise<WebGPUData<T>>;
-
-  new (
-    backend: WebGPUBackend,
-    type: DataType,
-    length: number,
-    usage?: number,
-  ): WebGPUData<T>;
-}
-
 export class WebGPUData<T extends DataType = DataType> implements Data<T> {
   type: T;
   backend: WebGPUBackend;
@@ -33,7 +13,8 @@ export class WebGPUData<T extends DataType = DataType> implements Data<T> {
   static async from<T extends DataType>(
     backend: WebGPUBackend,
     source: DataArray<T>,
-    type?: T
+    type?: T,
+    usage?: number,
   ): Promise<WebGPUData<T>> {
     // deno-fmt-ignore
     type = type || (
@@ -42,7 +23,7 @@ export class WebGPUData<T extends DataType = DataType> implements Data<T> {
       : source instanceof Float32Array ? "f32"
       : undefined
     )! as T;
-    const data = new this(backend, type, source.length);
+    const data = new this(backend, type, source.length, usage);
     await data.set(source);
     return data;
   }
@@ -91,7 +72,7 @@ export class WebGPUData<T extends DataType = DataType> implements Data<T> {
     ) as DataArray<T>;
   }
 
-  dispose() {
+  dispose(): void {
     this.buffer.destroy();
   }
 }

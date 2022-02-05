@@ -1,4 +1,4 @@
-export type BackendType = "cpu" | "wasm" | "webgpu";
+export type BackendType = "js" | "wasm" | "webgpu";
 export type DataPrimitive = "u32" | "i32" | "f32";
 export type DataVec = "vec2" | "vec3" | "vec4";
 export type DataMat = undefined;
@@ -44,9 +44,3 @@ export interface Backend {
 export interface BackendRequest<T extends DataType = DataType> {
   data: Data<T>[];
 }
-
-export type Operator<T extends DataType = DataType> = (
-  backend: Backend,
-  data: DataArray<T>[],
-  meta: unknown,
-) => Promise<void>;

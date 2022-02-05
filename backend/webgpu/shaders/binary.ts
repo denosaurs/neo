@@ -1,10 +1,12 @@
 import { DataType } from "../../types.ts";
 import { fmtType } from "../../util.ts";
+import { prelude } from "./misc.ts";
 
 export const binary = (dataType: DataType, expr: string) => {
   const type = fmtType(dataType)
   return `
-[[block]]
+${prelude}
+
 struct Data {
   values: array<${type}>;
 };
