@@ -17,4 +17,3 @@
 
 // // what about https://www.w3.org/TR/WGSL/#atomic-type
 // // Probably a good idea, but then again, no idea how to use it lol
-

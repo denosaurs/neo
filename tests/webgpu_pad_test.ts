@@ -17,6 +17,7 @@ const a = await WebGPUData.from<"f32">(
 );
 const b = new WebGPUData(backend, "f32", 16);
 
+// deno-fmt-ignore
 Deno.test({
   name: "Matrix Pad",
   async fn() {

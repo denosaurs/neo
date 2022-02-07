@@ -38,7 +38,8 @@ export class WebGPUData<T extends DataType = DataType> implements Data<T> {
     this.backend = backend;
     this.type = type;
     this.length = length;
-    this.size = this.length * DataArrayConstructor[getType(type)].BYTES_PER_ELEMENT;
+    this.size = this.length *
+      DataArrayConstructor[getType(type)].BYTES_PER_ELEMENT;
 
     this.buffer = this.backend.device.createBuffer({
       size: this.size,

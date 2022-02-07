@@ -40,7 +40,7 @@ export class WebGPUBackend implements Backend {
     this.initalized = true;
     this.adapter = adapter;
     this.device = await adapter.requestDevice();
-    
+
     enableValidationErrors(this.device, true);
   }
 

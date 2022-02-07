@@ -17,7 +17,7 @@ const a = await WebGPUData.from<"f32">(
 );
 const b = new WebGPUData(backend, "f32", 9);
 
-
+// deno-fmt-ignore
 Deno.test({
   name: "Matrix Transpose",
   async fn() {

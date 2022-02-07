@@ -36,4 +36,5 @@ fn main([[builtin(global_invocation_id)]] global_id: vec3<u32>) {
   }
   c.values[global_id.x + global_id.y * meta.n] = sum;
 }
-`};
+`;
+};

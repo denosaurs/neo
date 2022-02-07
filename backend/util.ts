@@ -1,4 +1,4 @@
-import { DataType, DataPrimitive } from "./types.ts";
+import { DataPrimitive, DataType } from "./types.ts";
 
 export function ensureType(...types: DataType[]) {
   const type = types[0];
@@ -10,5 +10,5 @@ export function ensureType(...types: DataType[]) {
 }
 
 export function getType(type: DataType): DataPrimitive {
-  return (type.startsWith("vec2") ? type.slice(5, -1) : type) as DataPrimitive
+  return (type.startsWith("vec2") ? type.slice(5, -1) : type) as DataPrimitive;
 }

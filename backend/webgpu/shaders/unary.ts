@@ -22,4 +22,5 @@ fn unary(a: ${type}) -> ${type} {
 fn main([[builtin(global_invocation_id)]] global_id: vec3<u32>) {
   b_data.values[global_id.x] = unary(a_data.values[global_id.x]);
 }
-`};
+`;
+};

@@ -80,4 +80,5 @@ fn main([[builtin(global_invocation_id)]] global_id: vec3<u32>) {
   let perlin = perlin2D(f32(global_id.y), f32(global_id.x));
   c.values[idx] = perlin;
 }
-`};
+`;
+};

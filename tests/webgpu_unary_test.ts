@@ -16,8 +16,8 @@ Deno.test({
   name: "Unary ReLU",
   async fn() {
     await relu(backend, a, b);
-    const expected = new Float32Array(10).fill(0)
+    const expected = new Float32Array(10).fill(0);
     assertEquals(await b.get(), expected);
   },
-  sanitizeResources: false
+  sanitizeResources: false,
 });
