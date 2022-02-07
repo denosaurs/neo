@@ -1,4 +1,3 @@
-import { ensureType } from "../../util.ts";
 import { WebGPUBackend } from "../backend.ts";
 import { WebGPUData } from "../data.ts";
 import { perlin as shader } from "../shaders/perlin.ts";

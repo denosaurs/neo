@@ -54,7 +54,7 @@ const result = await c.get()
 
 // CPU calculation
 
-function calculate() {
+function _calculate() {
     const vec = []
     for (let i = 0; i < meta.k; i++) {
         for (let j = 0; j < meta.k; j++) {
@@ -90,7 +90,7 @@ function perlin2D(posX: number, posY: number) {
     const left = Lerp(bld, tld, v)
     const right = Lerp(brd, trd, v)
     return Lerp(left, right, u)
-};
+}
 
 type Vector = {
     x: number,
