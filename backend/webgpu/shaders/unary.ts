@@ -1,9 +1,7 @@
 import { DataType } from "../../types.ts";
-import { fmtType } from "../../util.ts";
 import { prelude } from "./misc.ts";
 
-export const unary = (dataType: DataType, expr: string) => {
-  const type = fmtType(dataType)
+export const unary = (type: DataType, expr: string) => {
   return `
 ${prelude}
 

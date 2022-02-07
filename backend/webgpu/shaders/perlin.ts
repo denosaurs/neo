@@ -1,6 +1,3 @@
-import { DataType } from "../../types.ts";
-import { fmtType } from "../../util.ts";
-
 export const perlin = () => {
   return `
 struct Meta {

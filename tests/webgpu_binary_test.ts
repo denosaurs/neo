@@ -9,14 +9,14 @@ await backend.initialize();
 const a = await WebGPUData.from(
   backend,
   new Float32Array(16).fill(4),
-  ["vec2", "f32"]
+  "vec2<f32>"
 );
 const b = await WebGPUData.from(
   backend,
   new Float32Array(16).fill(4),
-  ["vec2", "f32"]
+  "vec2<f32>"
 );
-const c = new WebGPUData(backend, ["vec2", "f32"], 16);
+const c = new WebGPUData(backend, "vec2<f32>", 16);
 
 
 Deno.test({

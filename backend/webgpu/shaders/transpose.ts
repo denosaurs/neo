@@ -1,9 +1,7 @@
 import { DataType } from "../../types.ts";
-import { fmtType } from "../../util.ts";
 import { prelude } from "./misc.ts";
 
-export const transpose = (dataType: DataType) => {
-  const type = fmtType(dataType)
+export const transpose = (type: DataType) => {
   return `
 ${prelude}
 

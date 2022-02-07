@@ -1,9 +1,7 @@
 import { DataType } from "../../types.ts";
-import { fmtType } from "../../util.ts";
 import { prelude } from "./misc.ts";
 
-export const matmul = (dataType: DataType) => {
-  const type = fmtType(dataType)
+export const matmul = (type: DataType) => {
   return `
 ${prelude}
 

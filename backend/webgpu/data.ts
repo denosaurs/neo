@@ -17,12 +17,12 @@ export class WebGPUData<T extends DataType = DataType> implements Data<T> {
     usage?: number,
   ): Promise<WebGPUData<T>> {
     // deno-fmt-ignore
-    type = type || (
+    type = type ?? (
         source instanceof Uint32Array ? "u32"
       : source instanceof Int32Array ? "i32"
       : source instanceof Float32Array ? "f32"
       : undefined
-    )! as T;
+    ) as T;
     const data = new this(backend, type, source.length, usage);
     await data.set(source);
     return data;

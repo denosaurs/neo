@@ -6,7 +6,7 @@ import { perlin as shader } from "../shaders/perlin.ts";
 export async function perlin(
   backend: WebGPUBackend,
   a: WebGPUData<"i32">,
-  b: WebGPUData<["vec2", "f32"]>,
+  b: WebGPUData<"vec2<f32>">,
   c: WebGPUData<"f32">,
   { m, n, k }: { m: number; n: number; k: number },
 ) {
