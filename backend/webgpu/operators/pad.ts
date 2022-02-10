@@ -15,7 +15,6 @@ export async function pad<T extends DataType>(
   const uniform = await WebGPUData.from(
     backend,
     new Uint32Array([w, h, t]),
-    "u32",
     GPUBufferUsage.COPY_DST | GPUBufferUsage.UNIFORM,
   );
 
