@@ -15,6 +15,7 @@ export async function transpose<T extends DataType>(
   const uniform = await WebGPUData.from(
     backend,
     new Uint32Array([w, h]),
+    "u32",
     GPUBufferUsage.COPY_DST | GPUBufferUsage.UNIFORM,
   );
 
