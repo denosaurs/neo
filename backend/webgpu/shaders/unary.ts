@@ -1,10 +1,10 @@
 import { DataType } from "../../types.ts";
 import { prelude } from "./misc.ts";
 
-export const unary = (type: DataType, expr: string) => `
+export const unary = (type: DataType, expr: string) => {
+  return `
 ${prelude}
 
-[[block]]
 struct Data {
   values: array<${type}>;
 };
@@ -23,3 +23,4 @@ fn main([[builtin(global_invocation_id)]] global_id: vec3<u32>) {
   b_data.values[global_id.x] = unary(a_data.values[global_id.x]);
 }
 `;
+};

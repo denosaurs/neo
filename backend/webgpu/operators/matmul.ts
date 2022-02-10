@@ -16,6 +16,7 @@ export async function matmul<T extends DataType>(
   const uniform = await WebGPUData.from(
     backend,
     new Uint32Array([m, n, k]),
+    "u32",
     GPUBufferUsage.COPY_DST | GPUBufferUsage.UNIFORM,
   );
 
