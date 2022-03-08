@@ -1,0 +1,13 @@
+[package]
+name = "neo"
+license = "MIT"
+version = "0.1.0"
+authors = ["Elias Sjögreen"]
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+path = "lib.rs"
+
+[dependencies]
+wee_alloc = "0.4.5"
