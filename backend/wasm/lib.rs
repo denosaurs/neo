@@ -5,7 +5,7 @@ extern crate alloc;
 extern crate wee_alloc;
 
 pub mod binary;
-// pub mod unary;
+pub mod unary;
 // pub mod matmul;
 
 #[global_allocator]

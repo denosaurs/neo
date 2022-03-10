@@ -1,8 +1,7 @@
 import { source } from "./wasm.js";
 
-const decoder = new TextDecoder();
 
-const { instance } = await WebAssembly.instantiate(source, {
+export const { instance: { exports } } = await WebAssembly.instantiate(source, {
   env: {
     panic: (ptr: number, len: number) => {
       const msg = decoder.decode(
@@ -13,9 +12,9 @@ const { instance } = await WebAssembly.instantiate(source, {
   },
 });
 
-export const memory = instance.exports.memory as WebAssembly.Memory;
-export const alloc = instance.exports.alloc as (size: number) => number;
-export const dealloc = instance.exports.dealloc as (
+export const memory = exports.memory as WebAssembly.Memory;
+export const alloc = exports.alloc as (size: number) => number;
+export const dealloc = exports.dealloc as (
   ptr: number,
   size: number,
 ) => void;
