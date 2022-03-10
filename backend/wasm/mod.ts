@@ -1,6 +1,5 @@
 import { source } from "./wasm.js";
 
-
 export const { instance: { exports } } = await WebAssembly.instantiate(source, {
   env: {
     panic: (ptr: number, len: number) => {

@@ -1,4 +1,5 @@
 import { Data, DataArray, DataArrayConstructor, DataType } from "../types.ts";
+import { getType } from "../util.ts";
 import { WasmBackend } from "./backend.ts";
 
 export class WasmData<T extends DataType = DataType> implements Data<T> {
@@ -7,13 +8,14 @@ export class WasmData<T extends DataType = DataType> implements Data<T> {
 
   length: number;
   size: number;
-  buffer: GPUBuffer;
+  data: DataArray<T>;
+  pointer: number;
 
   static async from<T extends DataType>(
     backend: WasmBackend,
     source: DataArray<T>,
-    type?: T
-  ): Promise<WasmBackend<T>> {
+    type?: T,
+  ): Promise<WasmData<T>> {
     // deno-fmt-ignore
     type = type ?? (
         source instanceof Uint32Array ? "u32"
@@ -29,47 +31,32 @@ export class WasmData<T extends DataType = DataType> implements Data<T> {
   constructor(
     backend: WasmBackend,
     type: T,
-    length: number
+    length: number,
   ) {
     this.backend = backend;
     this.type = type;
     this.length = length;
     this.size = this.length *
       DataArrayConstructor[getType(type)].BYTES_PER_ELEMENT;
-
-    this.buffer = this.backend.device.createBuffer({
-      size: this.size,
-      usage,
-    });
+    this.pointer = this.backend.alloc(this.size);
+    this.data = new DataArrayConstructor[getType(this.type)](
+      this.backend.memory.buffer,
+      this.pointer,
+      this.length,
+    ) as DataArray<T>;
   }
 
   // deno-lint-ignore require-await
   async set(data: DataArray<T>) {
-    // const buffer = this.buffer.getMappedRange();
-    // const target = new DataArrayConstructor[this.type](buffer);
-    // target.set(data);
-    // this.buffer.unmap();
-    this.backend.device.queue.writeBuffer(this.buffer, 0, data);
+    this.data.set(data);
   }
 
+  // deno-lint-ignore require-await
   async get(): Promise<DataArray<T>> {
-    const staging = this.backend.device.createBuffer({
-      size: this.size,
-      usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
-    });
-
-    const commandEncoder = this.backend.device.createCommandEncoder();
-    commandEncoder.copyBufferToBuffer(this.buffer, 0, staging, 0, this.size);
-    this.backend.device.queue.submit([commandEncoder.finish()]);
-
-    await staging.mapAsync(GPUMapMode.READ);
-
-    return new DataArrayConstructor[getType(this.type)](
-      staging.getMappedRange().slice(0),
-    ) as DataArray<T>;
+    return this.data.slice() as DataArray<T>;
   }
 
   dispose(): void {
-    this.buffer.destroy();
+    this.backend.dealloc(this.pointer, this.size);
   }
 }
