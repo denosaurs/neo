@@ -6,7 +6,7 @@ extern crate wee_alloc;
 
 pub mod binary;
 pub mod unary;
-// pub mod matmul;
+pub mod matmul;
 
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
