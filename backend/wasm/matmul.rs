@@ -27,7 +27,10 @@ macro_rules! matmul_impl {
               l_index * k + m_index,
               m_index * n + n_index,
             );
-            unsafe { *c_data.get_unchecked_mut(i) += a_data.get_unchecked(j) * b_data.get_unchecked(k) };
+            unsafe {
+              *c_data.get_unchecked_mut(i) +=
+                a_data.get_unchecked(j) * b_data.get_unchecked(k)
+            };
           }
         }
       }
