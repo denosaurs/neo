@@ -1,4 +1,4 @@
-export type BackendType = "js" | "wasm" | "webgpu";
+export type BackendType = "wasm" | "webgpu";
 export type DataPrimitive = "u32" | "i32" | "f32";
 export type DataVec = `vec${2 | 3 | 4}<${DataPrimitive}>`;
 // export type DataMat = `mat${2 | 3 | 4}<${DataPrimitive}>`;

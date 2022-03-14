@@ -27,7 +27,7 @@ export function unary<T extends DataType>(
 
 export const abs = unary("return abs(a);");
 export const linear = unary("return a;");
-export const neg = unary("return -a;");
+export const neg = unary<"f32" | "i32">("return -a;");
 export const inc = unary("return a = a + 1;");
 export const dec = unary("return a = a - 1;");
 export const relu = unary<"f32" | "i32">((type) =>
@@ -42,7 +42,7 @@ export const round = unary<"f32">("return round(a);");
 export const sqrt = unary<"f32">("return sqrt(a);");
 export const rsqrt = unary<"f32">("return 1.0 / sqrt(a);");
 export const sigmoid = unary<"f32">("return 1.0 / (1.0 + exp(-1.0 * a));");
-export const square = unary<"f32">("return a * a;");
+export const square = unary<"f32" | "u32" | "i32">("return a * a;");
 export const cos = unary<"f32">("return cos(a);");
 export const cosh = unary<"f32">(`
   let e2x = exp(-a);

@@ -1,0 +1,9 @@
+[workspace]
+members = [
+  "backend/wasm"
+]
+
+[profile.release]
+panic = "abort"
+opt-level = 3
+lto = true

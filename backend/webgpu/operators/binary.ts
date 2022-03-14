@@ -34,5 +34,5 @@ export const mod = binary("return a % b;");
 export const min = binary("return min(a, b);");
 export const max = binary("return max(a, b);");
 export const prelu = binary<"f32" | "i32">((type) =>
-  `if (a < 0${type}) { return b * a; }  return a;`
+  `if (a < 0${type}) { return a * b; }  return a;`
 );
