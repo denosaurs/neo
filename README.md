@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/github/license/denosaurs/neo)](https://github.com/denosaurs/neo/blob/main/LICENSE)
 
 `neo` is a module for working with matrices and other linear algebra,
-accelerated using WebGPU.
+accelerated using WebGPU and wasm.
 
 ## Maintainers
 
@@ -21,4 +21,4 @@ Pull request, issues and feedback are very welcome. Code style is formatted with
 
 ### Licence
 
-Copyright 2021, the denosaurs team. All rights reserved. MIT license.
+Copyright 2021-2022, the denosaurs team. All rights reserved. MIT license.
