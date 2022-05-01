@@ -4,8 +4,10 @@ import { WasmData } from "./data.ts";
 
 const decoder = new TextDecoder();
 
-export interface WebGPUBackendRequest<T extends DataType = DataType>
+export interface WasmBackendRequest<T extends DataType = DataType>
   extends BackendRequest<T> {
+  func: string;
+  args: number[];
   data: WasmData<T>[];
 }
 
@@ -14,7 +16,11 @@ export class WasmBackend implements Backend {
   initalized = false;
   supported = true;
 
-  instance: WebAssembly.Instance;
+  instance!: WebAssembly.Instance;
+  memory!: WebAssembly.Memory;
+
+  alloc!: (size: number) => number;
+  dealloc!: (ptr: number, size: number) => void;
 
   async initialize(): Promise<void> {
     if (this.initalized) {
@@ -26,15 +32,15 @@ export class WasmBackend implements Backend {
       env: {
         panic: (ptr: number, len: number) => {
           const msg = decoder.decode(
-            new Uint8Array(memory.buffer, ptr, len),
+            new Uint8Array(this.memory.buffer, ptr, len),
           );
           throw new Error(msg);
         },
       },
     });
-    const memory = exports.memory as WebAssembly.Memory;
-    const alloc = exports.alloc as (size: number) => number;
-    const dealloc = exports.dealloc as (
+    this.memory = exports.memory as WebAssembly.Memory;
+    this.alloc = exports.alloc as (size: number) => number;
+    this.dealloc = exports.dealloc as (
       ptr: number,
       size: number,
     ) => void;
@@ -42,42 +48,21 @@ export class WasmBackend implements Backend {
     this.initalized = true;
   }
 
-  async register(code: string): Promise<string> {
-    if (this.pipelines.has(code)) {
-      return code;
-    }
-
-    const module = this.device.createShaderModule({ code });
-    const pipeline = await this.device.createComputePipelineAsync({
-      compute: { module, entryPoint: "main" },
-    });
-    const layout = pipeline.getBindGroupLayout(0);
-
-    this.pipelines.set(code, [pipeline, layout]);
-    return code;
-  }
-
   // deno-lint-ignore require-await
   async execute(request: WasmBackendRequest): Promise<void> {
-    const pipelineLayout = this.pipelines.get(request.pipeline);
-    if (!pipelineLayout) {
-      throw "Could not find pipeline";
+    if (!this.initalized) {
+      throw new Error("WasmBackend is not initialized");
     }
-    const [pipeline, layout] = pipelineLayout;
 
-    const entries = request.data.map(({ buffer }, index) => ({
-      binding: index,
-      resource: { buffer },
-    }));
-    const bindgroup = this.device.createBindGroup({ layout, entries });
+    // deno-lint-ignore no-explicit-any
+    const func = this.instance.exports[request.func] as ((...args: any) => any) | undefined;
 
-    const commandEncoder = this.device.createCommandEncoder();
-    const passEncoder = commandEncoder.beginComputePass();
-    passEncoder.setBindGroup(0, bindgroup);
-    passEncoder.setPipeline(pipeline);
-    passEncoder.dispatch(...request.workgroups as [number, number, number]);
-    passEncoder.endPass();
+    if (func === undefined) {
+      throw new Error(`Could not find wasm function ${request.func}`);
+    }
 
-    this.device.queue.submit([commandEncoder.finish()]);
+    const args = request.data.map(data => data.ptr).concat(request.args);
+    
+    func(...args);
   }
 }
