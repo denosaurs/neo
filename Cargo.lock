@@ -21,9 +21,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8452105ba047068f40ff7093dd1d9da90898e63dd61736462e9cdda6a90ad3c3"
 
 [[package]]
-name = "neo"
+name = "neo_rust"
 version = "0.1.0"
 dependencies = [
+ "wee_alloc",
+]
+
+[[package]]
+name = "neo_wasm"
+version = "0.1.0"
+dependencies = [
+ "neo_rust",
  "wee_alloc",
 ]
 

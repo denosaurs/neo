@@ -1,11 +1,10 @@
 #![no_std]
-#![feature(default_alloc_error_handler, core_intrinsics)]
+#![feature(default_alloc_error_handler)]
 
 extern crate alloc;
 extern crate wee_alloc;
 
-pub mod binary;
-pub mod unary;
+pub use neo_rust;
 // pub mod matmul;
 
 #[global_allocator]

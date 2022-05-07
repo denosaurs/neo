@@ -1,5 +1,13 @@
 {
   "tasks": {
-    "build": "deno run --allow-run --allow-read --allow-write scripts/build.ts"
+    "fmt": "deno fmt --unstable && cargo fmt",
+    "lint": "deno lint --unstable && cargo clippy",
+    "build": "deno task wasm",
+    "wasm": "deno run --allow-run --allow-read --allow-write scripts/wasm.ts"
+  },
+  "fmt": {
+    "files": {
+      "exclude": ["target/"]
+    }
   }
 }
