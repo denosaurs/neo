@@ -1,22 +1,24 @@
 #![no_std]
-#![feature(default_alloc_error_handler, core_intrinsics)]
+#![feature(default_alloc_error_handler)]
 
 extern crate alloc;
 extern crate wee_alloc;
 
-pub mod binary;
-pub mod matmul;
-pub mod unary;
+pub use neo_rust;
+// pub mod matmul;
 
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
+#[cfg(not(test))]
 const DEFAULT_PANIC: &str = "Panic occured";
 
+#[cfg(not(test))]
 extern "C" {
   fn panic(ptr: *const u8, len: usize);
 }
 
+#[cfg(not(test))]
 #[panic_handler]
 #[no_mangle]
 fn panic_handler(panic_info: &core::panic::PanicInfo) -> ! {

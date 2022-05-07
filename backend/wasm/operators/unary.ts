@@ -1,9 +1,9 @@
-import { DataPrimitive } from "../../types.ts";
+import { DataType } from "../../types.ts";
 import { ensureType } from "../../util.ts";
 import { WasmBackend } from "../backend.ts";
 import { WasmData } from "../data.ts";
 
-export function unary<T extends DataPrimitive>(func: string) {
+export function unary<T extends DataType>(func: string) {
   return async function (
     backend: WasmBackend,
     a: WasmData<T>,
@@ -20,10 +20,10 @@ export function unary<T extends DataPrimitive>(func: string) {
 }
 
 export const abs = unary<"f32" | "i32">("abs");
-export const linear = unary("linear");
-export const neg = unary<"f32" | "i32">("neg");
-export const inc = unary("inc");
-export const dec = unary("dec");
+export const linear = unary<"f32" | "u32" | "i32">("linear");
+export const neg = unary<"f32" | "u32" | "i32">("neg");
+export const inc = unary<"f32" | "u32" | "i32">("inc");
+export const dec = unary<"f32" | "u32" | "i32">("dec");
 export const relu = unary<"f32" | "i32">("relu");
 export const relu6 = unary<"f32" | "i32">("relu6");
 export const ceil = unary<"f32">("ceil");
@@ -32,7 +32,7 @@ export const round = unary<"f32">("round");
 export const sqrt = unary<"f32">("sqrt");
 export const rsqrt = unary<"f32">("rsqrt");
 export const sigmoid = unary<"f32">("sigmoid");
-export const square = unary("square");
+export const square = unary<"f32" | "u32" | "i32">("square");
 export const cos = unary<"f32">("cos");
 export const cosh = unary<"f32">("cosh");
 export const sin = unary<"f32">("sin");

@@ -1,9 +1,9 @@
-import { DataPrimitive } from "../../types.ts";
+import { DataType } from "../../types.ts";
 import { ensureType } from "../../util.ts";
 import { WasmBackend } from "../backend.ts";
 import { WasmData } from "../data.ts";
 
-export function binary<T extends DataPrimitive>(func: string) {
+export function binary<T extends DataType>(func: string) {
   return async function (
     backend: WasmBackend,
     a: WasmData<T>,
@@ -20,11 +20,11 @@ export function binary<T extends DataPrimitive>(func: string) {
   };
 }
 
-export const add = binary("add");
-export const sub = binary("sub");
-export const mul = binary("mul");
-export const div = binary("div");
-export const mod = binary("mod");
-export const min = binary("min");
-export const max = binary("max");
+export const add = binary<"f32" | "u32" | "i32">("add");
+export const sub = binary<"f32" | "u32" | "i32">("sub");
+export const mul = binary<"f32" | "u32" | "i32">("mul");
+export const div = binary<"f32" | "u32" | "i32">("div");
+export const mod = binary<"f32" | "u32" | "i32">("mod");
+export const min = binary<"f32" | "u32" | "i32">("min");
+export const max = binary<"f32" | "u32" | "i32">("max");
 export const prelu = binary<"f32" | "i32">("prelu");

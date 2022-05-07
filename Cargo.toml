@@ -1,6 +1,8 @@
 [workspace]
 members = [
+  "backend/rust",
   "backend/wasm"
+# TODO: "backend/native"
 ]
 
 [profile.release]

@@ -1,14 +1,12 @@
 [package]
-name = "neo_wasm"
+name = "neo_rust"
 license = "MIT"
 version = "0.1.0"
 authors = ["Elias Sjögreen"]
 edition = "2021"
 
 [lib]
-crate-type = ["cdylib"]
 path = "lib.rs"
 
 [dependencies]
-neo_rust = { path = "../rust" }
 wee_alloc = "0.4.5"
