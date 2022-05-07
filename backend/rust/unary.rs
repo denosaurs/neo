@@ -55,27 +55,27 @@ unary_operator!(square_i32, i32, |a| a * a);
 unary_operator!(cos_f32, f32, |a: f32| core::intrinsics::cosf32(a));
 unary_operator!(cosh_f32, f32, |a: f32| {
   let e2x = core::intrinsics::expf32(-a);
-  return (e2x + 1.0 / e2x) / 2.0;
+  (e2x + 1.0 / e2x) / 2.0
 });
 
 unary_operator!(sin_f32, f32, |a: f32| core::intrinsics::sinf32(a));
 unary_operator!(sinh_f32, f32, |a: f32| {
   let e2x = core::intrinsics::expf32(a);
-  return (e2x - 1.0 / e2x) / 2.0;
+  (e2x - 1.0 / e2x) / 2.0
 });
 
 unary_operator!(tan_f32, f32, |a: f32| core::intrinsics::sinf32(a)
   / core::intrinsics::cosf32(a));
 unary_operator!(tanh_f32, f32, |a: f32| {
   let e2x = core::intrinsics::expf32(-2.0 * if a < 0.0 { -a } else { a });
-  return if a.is_nan() {
+  (if a.is_nan() {
     f32::NAN
   } else if a.is_sign_negative() {
     -1.0
   } else {
     1.0
-  } * (1.0 - e2x)
-    / (1.0 + e2x);
+  }) * (1.0 - e2x)
+    / (1.0 + e2x)
 });
 
 unary_operator!(exp_f32, f32, |a: f32| core::intrinsics::expf32(a));

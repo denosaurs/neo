@@ -1,14 +1,14 @@
 {
   "tasks": {
     "check": "deno task check:deno && deno task check:rust",
-    "check:deno": "deno check --unstable",
+    "check:deno": "deno check --unstable mod.ts",
     "check:rust": "cargo check --target wasm32-unknown-unknown --release",
     "fmt": "deno task fmt:deno && deno task fmt:rust",
     "fmt:deno": "deno fmt --unstable",
-    "fmt:rust": "cargo fmt --release",
+    "fmt:rust": "cargo fmt",
     "lint": "deno task lint:deno && deno task lint:rust",
     "lint:deno": "deno lint --unstable",
-    "lint:rust": "cargo clippy --target wasm32-unknown-unknown --release -- -D clippy::missing_safety_doc -D clippy::undocumented_unsafe_blocks",
+    "lint:rust": "cargo clippy --target wasm32-unknown-unknown --release -- -D clippy::all -A clippy::missing_safety_doc -A clippy::undocumented_unsafe_blocks",
     "build": "deno task build:wasm",
     "build:wasm": "deno run --allow-run --allow-read --allow-write scripts/build_wasm.ts neo_wasm backend/wasm/wasm.js"
   },
