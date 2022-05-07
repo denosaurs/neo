@@ -1,4 +1,3 @@
-// import { wasm } from "../../util.ts";
 import { Backend, BackendRequest, DataType } from "../types.ts";
 import { WasmData } from "./data.ts";
 
@@ -54,15 +53,15 @@ export class WasmBackend implements Backend {
       throw new Error("WasmBackend is not initialized");
     }
 
-    // deno-lint-ignore no-explicit-any
-    const func = this.instance.exports[request.func] as ((...args: any) => any) | undefined;
+    const func = this.instance
+      .exports[request.func] as (((...args: unknown[]) => unknown) | undefined);
 
     if (func === undefined) {
       throw new Error(`Could not find wasm function ${request.func}`);
     }
 
-    const args = request.data.map(data => data.ptr).concat(request.args);
-    
+    const args = request.data.map((data) => data.ptr).concat(request.args);
+
     func(...args);
   }
 }

@@ -15,7 +15,7 @@ export class WasmData<T extends DataType = DataType> implements Data<T> {
   static async from<T extends DataType>(
     backend: WasmBackend,
     source: DataArray<T>,
-    type?: T
+    type?: T,
   ): Promise<WasmData<T>> {
     // deno-fmt-ignore
     type = type ?? (
@@ -32,18 +32,23 @@ export class WasmData<T extends DataType = DataType> implements Data<T> {
   constructor(
     backend: WasmBackend,
     type: T,
-    length: number
+    length: number,
   ) {
-    const Constructor = DataArrayConstructor[getType(type)] as DataArrayConstructor<T>;
+    const Constructor =
+      DataArrayConstructor[getType(type)] as DataArrayConstructor<T>;
 
     this.backend = backend;
     this.type = type;
     this.length = length;
     this.size = this.length *
-    Constructor.BYTES_PER_ELEMENT;
+      Constructor.BYTES_PER_ELEMENT;
 
     this.ptr = this.backend.alloc(this.size);
-    this.data = new Constructor(this.backend.memory.buffer, this.ptr, this.length) as DataArray<T>;
+    this.data = new Constructor(
+      this.backend.memory.buffer,
+      this.ptr,
+      this.length,
+    ) as DataArray<T>;
   }
 
   // deno-lint-ignore require-await
