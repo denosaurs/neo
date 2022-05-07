@@ -10,12 +10,15 @@ pub use neo_rust;
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
+#[cfg(not(test))]
 const DEFAULT_PANIC: &str = "Panic occured";
 
+#[cfg(not(test))]
 extern "C" {
   fn panic(ptr: *const u8, len: usize);
 }
 
+#[cfg(not(test))]
 #[panic_handler]
 #[no_mangle]
 fn panic_handler(panic_info: &core::panic::PanicInfo) -> ! {
