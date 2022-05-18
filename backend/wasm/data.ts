@@ -2,7 +2,8 @@ import { Data, DataArray, DataArrayConstructor, DataType } from "../types.ts";
 import { getType } from "../util.ts";
 import { WasmBackend } from "./backend.ts";
 
-export class WasmData<T extends DataType = DataType> implements Data<T> {
+export class WasmData<T extends DataType = DataType>
+  implements Data<T, WasmBackend> {
   type: T;
   backend: WasmBackend;
 

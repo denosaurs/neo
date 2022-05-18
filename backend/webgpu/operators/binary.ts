@@ -11,6 +11,7 @@ export function binary<T extends DataType>(
 
   return async function (
     backend: WebGPUBackend,
+    _: undefined,
     a: WebGPUData<T>,
     b: WebGPUData<T>,
     c: WebGPUData<T>,

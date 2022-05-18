@@ -2,7 +2,8 @@ import { Data, DataArray, DataArrayConstructor, DataType } from "../types.ts";
 import { getType } from "../util.ts";
 import { WebGPUBackend } from "./backend.ts";
 
-export class WebGPUData<T extends DataType = DataType> implements Data<T> {
+export class WebGPUData<T extends DataType = DataType>
+  implements Data<T, WebGPUBackend> {
   type: T;
   backend: WebGPUBackend;
 

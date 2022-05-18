@@ -12,3 +12,13 @@ export function ensureType(...types: DataType[]) {
 export function getType(type: DataType): DataPrimitive {
   return (type.startsWith("vec2") ? type.slice(5, -1) : type) as DataPrimitive;
 }
+
+// deno-lint-ignore no-explicit-any
+export function isConstructor(f: any): boolean {
+  try {
+    Reflect.construct(String, [], f);
+  } catch {
+    return false;
+  }
+  return true;
+}
