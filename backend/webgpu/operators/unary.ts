@@ -1,8 +1,8 @@
-import { DataType } from "../../types.ts";
-import { ensureType } from "../../util.ts";
+import { DataType } from "../../types/data.ts";
+import { ensureDataType } from "../../util/data.ts";
 import { WebGPUBackend } from "../backend.ts";
 import { WebGPUData } from "../data.ts";
-import { unary as shader } from "../shaders/unary.ts";
+import shader from "../shaders/unary.ts";
 
 export function unary<T extends DataType>(
   expr: ((type: DataType) => string) | string,
@@ -14,14 +14,14 @@ export function unary<T extends DataType>(
     a: WebGPUData<T>,
     b: WebGPUData<T>,
   ) {
-    const type = ensureType(a.type, b.type);
+    const type = ensureDataType(a.type, b.type);
     const pipeline = await backend.register(shader(type, exprfn(type)));
 
-    await backend.execute({
+    backend.execute(
       pipeline,
-      data: [a, b],
-      workgroups: [128],
-    });
+      [128],
+      [a, b],
+    );
   };
 }
 

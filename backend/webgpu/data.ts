@@ -1,9 +1,16 @@
-import { Data, DataArray, DataArrayConstructor, DataType } from "../types.ts";
-import { getType } from "../util.ts";
+import {
+  Data,
+  DataType,
+  DataTypeArray,
+  DataTypeArrayConstructor,
+} from "../types/data.ts";
+import { getDataTypeArrayConstructor } from "../util/data.ts";
 import { WebGPUBackend } from "./backend.ts";
 
 export class WebGPUData<T extends DataType = DataType>
-  implements Data<T, WebGPUBackend> {
+  implements Data<T, "webgpu"> {
+  #DataTypeArrayConstructor: DataTypeArrayConstructor<T>;
+
   type: T;
   backend: WebGPUBackend;
 
@@ -13,7 +20,7 @@ export class WebGPUData<T extends DataType = DataType>
 
   static async from<T extends DataType>(
     backend: WebGPUBackend,
-    source: DataArray<T>,
+    source: DataTypeArray<T>,
     type?: T,
     usage?: number,
   ): Promise<WebGPUData<T>> {
@@ -36,11 +43,13 @@ export class WebGPUData<T extends DataType = DataType>
     usage: number = GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC |
       GPUBufferUsage.COPY_DST,
   ) {
+    this.#DataTypeArrayConstructor = getDataTypeArrayConstructor(type);
+
     this.backend = backend;
     this.type = type;
     this.length = length;
     this.size = this.length *
-      DataArrayConstructor[getType(type)].BYTES_PER_ELEMENT;
+      this.#DataTypeArrayConstructor.BYTES_PER_ELEMENT;
 
     this.buffer = this.backend.device.createBuffer({
       size: this.size,
@@ -49,15 +58,12 @@ export class WebGPUData<T extends DataType = DataType>
   }
 
   // deno-lint-ignore require-await
-  async set(data: DataArray<T>) {
-    // const buffer = this.buffer.getMappedRange();
-    // const target = new DataArrayConstructor[this.type](buffer);
-    // target.set(data);
-    // this.buffer.unmap();
+  async set(data: DataTypeArray<T>) {
+    // TODO: Follow upload best practices: https://github.com/toji/webgpu-best-practices/blob/main/buffer-uploads.md
     this.backend.device.queue.writeBuffer(this.buffer, 0, data);
   }
 
-  async get(): Promise<DataArray<T>> {
+  async get(): Promise<DataTypeArray<T>> {
     const staging = this.backend.device.createBuffer({
       size: this.size,
       usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
@@ -69,9 +75,9 @@ export class WebGPUData<T extends DataType = DataType>
 
     await staging.mapAsync(GPUMapMode.READ);
 
-    return new DataArrayConstructor[getType(this.type)](
+    return new this.#DataTypeArrayConstructor(
       staging.getMappedRange().slice(0),
-    ) as DataArray<T>;
+    ) as DataTypeArray<T>;
   }
 
   dispose(): void {

@@ -20,7 +20,11 @@ import { WebGPUBackend } from "../webgpu/backend.ts";
 export type CoreBackendType = Exclude<BackendType, "core">;
 
 export interface CoreBackendOptions {
-  backends?: (CoreBackendType | BackendConstructor<WasmBackend | WebGPUBackend> | Backend)[];
+  backends?: (
+    | CoreBackendType
+    | BackendConstructor<WasmBackend | WebGPUBackend>
+    | Backend
+  )[];
 }
 
 export interface CoreBackendRequest<
@@ -28,13 +32,12 @@ export interface CoreBackendRequest<
   T extends DataType = GetDataDataType<GetBackendOperatorData<O>>,
   B extends CoreBackend = GetBackendOperatorBackend<O>,
   A extends Record<string, unknown> = GetBackendOperatorArgs<O>,
-  > extends BackendRequest<T, Backend> {
+> extends BackendRequest<T, Backend> {
   backend: B["type"];
   operator: O;
   args: A;
   data: Data<T, Backend>[];
 }
-
 
 export class CoreBackend implements Backend {
   type = "core" as const;
@@ -49,8 +52,12 @@ export class CoreBackend implements Backend {
     for (let backend of backends) {
       if (typeof backend === "string") {
         switch (backend) {
-          case "wasm": backend = new WasmBackend(); break;
-          case "webgpu": backend = new WebGPUBackend(); break;
+          case "wasm":
+            backend = new WasmBackend();
+            break;
+          case "webgpu":
+            backend = new WebGPUBackend();
+            break;
         }
       }
 
@@ -84,7 +91,7 @@ export class CoreBackend implements Backend {
     O extends BackendOperator,
     T extends DataType = GetDataDataType<GetBackendOperatorData<O>>,
     B extends Backend = GetBackendOperatorBackend<O>,
-    >(request: CoreBackendRequest<O>): Promise<void> {
+  >(request: CoreBackendRequest<O>): Promise<void> {
     if (!this.backends.has(request.backend)) {
       throw new Error(
         `The CoreBackend does not contain a sub-backend of type ${request.backend}`,
@@ -94,7 +101,9 @@ export class CoreBackend implements Backend {
     const backend: B = this.backends.get(request.backend)! as B;
 
     // TODO: Should and could definitely be optimized with a persistant data pool and "meta" allocator
-    const dataArray: ([Data<T, B>, GetBackendOperatorData<O>] | GetBackendOperatorData<O>)[] = [];
+    const dataArray:
+      ([Data<T, B>, GetBackendOperatorData<O>] | GetBackendOperatorData<O>)[] =
+        [];
     const dataConversionPromises: Promise<void>[] = [];
     for (let index = 0; index < request.data.length; index++) {
       const data = request.data[index] as unknown as Data<T, B>;
@@ -106,7 +115,7 @@ export class CoreBackend implements Backend {
               // deno-lint-ignore no-explicit-any
               backend as any,
               content,
-              data.type
+              data.type,
             ) as unknown as GetBackendOperatorData<O>;
           dataArray[index] = [data, temporaryData];
         })());
@@ -116,7 +125,9 @@ export class CoreBackend implements Backend {
     }
     await Promise.all(dataConversionPromises);
 
-    const operatorData = dataArray.map((data) => Array.isArray(data) ? data[1] : data) as GetBackendOperatorData<O>[];
+    const operatorData = dataArray.map((data) =>
+      Array.isArray(data) ? data[1] : data
+    ) as GetBackendOperatorData<O>[];
     // deno-lint-ignore no-explicit-any
     await request.operator(backend, request.args, ...operatorData as any);
 
@@ -125,7 +136,10 @@ export class CoreBackend implements Backend {
     for (const dataPair of dataArray) {
       if (Array.isArray(dataPair)) {
         dataDeconversionPromises.push((async () => {
-          const [data, temporaryData] = dataPair as [Data<T, B>, GetBackendOperatorData<O>];
+          const [data, temporaryData] = dataPair as [
+            Data<T, B>,
+            GetBackendOperatorData<O>,
+          ];
           await data.set(await temporaryData.get() as DataArray<T>);
           temporaryData.dispose();
         })());

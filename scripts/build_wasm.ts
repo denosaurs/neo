@@ -1,4 +1,4 @@
-import { encode } from "https://deno.land/std@0.137.0/encoding/base64.ts";
+import { encode } from "https://deno.land/std@0.140.0/encoding/base64.ts";
 import { compress } from "https://deno.land/x/lz4@v0.1.2/mod.ts";
 
 const name = Deno.args[0];

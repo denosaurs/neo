@@ -1,21 +1,16 @@
-import { DataType } from "../../types.ts";
-import { ensureType } from "../../util.ts";
+import { DataType } from "../../types/data.ts";
+import { ensureDataType } from "../../util/data.ts";
 import { WasmBackend } from "../backend.ts";
 import { WasmData } from "../data.ts";
 
 export function unary<T extends DataType>(func: string) {
-  return async function (
+  return function (
     backend: WasmBackend,
     a: WasmData<T>,
     b: WasmData<T>,
   ) {
-    const type = ensureType(a.type, b.type);
-
-    await backend.execute({
-      func: `${func}_${type}`,
-      args: [a.length],
-      data: [a, b],
-    });
+    const type = ensureDataType(a.type, b.type);
+    backend.execute(`${func}_${type}`, [a.length, a, b]);
   };
 }
 

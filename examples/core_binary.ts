@@ -26,6 +26,6 @@ await backend.execute({
   operator: add,
   args: undefined,
   data: [a, b, c],
-})
+});
 
 console.log(await c.get());

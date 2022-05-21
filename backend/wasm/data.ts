@@ -1,9 +1,9 @@
-import { Data, DataArray, DataArrayConstructor, DataType } from "../types.ts";
-import { getType } from "../util.ts";
+import { Data, DataType, DataTypeArray } from "../types/data.ts";
+import { getDataTypeArrayConstructor } from "../util/data.ts";
 import { WasmBackend } from "./backend.ts";
 
 export class WasmData<T extends DataType = DataType>
-  implements Data<T, WasmBackend> {
+  implements Data<T, "wasm"> {
   type: T;
   backend: WasmBackend;
 
@@ -11,11 +11,11 @@ export class WasmData<T extends DataType = DataType>
   length: number;
   size: number;
   ptr: number;
-  data: DataArray<T>;
+  data: DataTypeArray<T>;
 
   static async from<T extends DataType>(
     backend: WasmBackend,
-    source: DataArray<T>,
+    source: DataTypeArray<T>,
     type?: T,
   ): Promise<WasmData<T>> {
     // deno-fmt-ignore
@@ -35,25 +35,24 @@ export class WasmData<T extends DataType = DataType>
     type: T,
     length: number,
   ) {
-    const Constructor =
-      DataArrayConstructor[getType(type)] as DataArrayConstructor<T>;
+    const DataTypeArrayConstructor = getDataTypeArrayConstructor(type);
 
     this.backend = backend;
     this.type = type;
     this.length = length;
     this.size = this.length *
-      Constructor.BYTES_PER_ELEMENT;
+      DataTypeArrayConstructor.BYTES_PER_ELEMENT;
 
     this.ptr = this.backend.alloc(this.size);
-    this.data = new Constructor(
+    this.data = new DataTypeArrayConstructor(
       this.backend.memory.buffer,
       this.ptr,
       this.length,
-    ) as DataArray<T>;
+    ) as DataTypeArray<T>;
   }
 
   // deno-lint-ignore require-await
-  async set(data: DataArray<T>) {
+  async set(data: DataTypeArray<T>) {
     if (!this.active) {
       throw "WasmData is not active";
     }
@@ -62,12 +61,12 @@ export class WasmData<T extends DataType = DataType>
   }
 
   // deno-lint-ignore require-await
-  async get(): Promise<DataArray<T>> {
+  async get(): Promise<DataTypeArray<T>> {
     if (!this.active) {
       throw "WasmData is not active";
     }
 
-    return this.data.slice() as DataArray<T>;
+    return this.data.slice() as DataTypeArray<T>;
   }
 
   dispose(): void {

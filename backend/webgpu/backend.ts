@@ -1,17 +1,10 @@
 import { enableValidationErrors } from "../../deps.ts";
 import { webgpu } from "../../util.ts";
-import { Backend, BackendRequest, DataType } from "../types.ts";
+import { Backend } from "../types/backend.ts";
 import { WebGPUData } from "./data.ts";
 import { Workgroups } from "./types.ts";
 
-export interface WebGPUBackendRequest<T extends DataType = DataType>
-  extends BackendRequest<T> {
-  pipeline: string;
-  data: WebGPUData<T>[];
-  workgroups: Workgroups;
-}
-
-export class WebGPUBackend implements Backend {
+export class WebGPUBackend implements Backend<"webgpu"> {
   type = "webgpu" as const;
   initalized = false;
   supported = webgpu;
@@ -59,17 +52,20 @@ export class WebGPUBackend implements Backend {
     return code;
   }
 
-  // deno-lint-ignore require-await
-  async execute(request: WebGPUBackendRequest): Promise<void> {
-    const pipelineLayout = this.pipelines.get(request.pipeline);
+  execute(
+    name: string,
+    workgroups: Workgroups,
+    args: (WebGPUData | GPUBuffer)[],
+  ) {
+    const pipelineLayout = this.pipelines.get(name);
     if (!pipelineLayout) {
       throw "Could not find pipeline";
     }
     const [pipeline, layout] = pipelineLayout;
 
-    const entries = request.data.map(({ buffer }, index) => ({
+    const entries = args.map((arg, index) => ({
       binding: index,
-      resource: { buffer },
+      resource: { buffer: arg instanceof GPUBuffer ? arg : arg.buffer },
     }));
     const bindgroup = this.device.createBindGroup({ layout, entries });
 
@@ -77,7 +73,7 @@ export class WebGPUBackend implements Backend {
     const passEncoder = commandEncoder.beginComputePass();
     passEncoder.setBindGroup(0, bindgroup);
     passEncoder.setPipeline(pipeline);
-    passEncoder.dispatch(...request.workgroups as [number, number, number]);
+    passEncoder.dispatch(...workgroups as [number, number, number]);
     passEncoder.endPass();
 
     this.device.queue.submit([commandEncoder.finish()]);

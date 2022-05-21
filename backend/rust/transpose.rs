@@ -2,10 +2,10 @@ macro_rules! transpose_operator {
   ($identifier:ident, $type:ty) => {
     #[no_mangle]
     pub unsafe extern "C" fn $identifier(
-      a_data: *const $type,
-      b_data: *mut $type,
       w: usize,
       h: usize,
+      a_data: *const $type,
+      b_data: *mut $type,
     ) {
       let len = w * h;
       let a_data = &core::slice::from_raw_parts(a_data, len)[..len];

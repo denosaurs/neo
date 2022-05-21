@@ -1,8 +1,8 @@
-import { DataType } from "../../types.ts";
-import { ensureType } from "../../util.ts";
+import { DataType } from "../../types/data.ts";
+import { ensureDataType } from "../../util/data.ts";
 import { WebGPUBackend } from "../backend.ts";
 import { WebGPUData } from "../data.ts";
-import { matmul as shader } from "../shaders/matmul.ts";
+import shader from "../shaders/matmul.ts";
 
 export async function matmul<T extends DataType>(
   backend: WebGPUBackend,
@@ -11,7 +11,7 @@ export async function matmul<T extends DataType>(
   c: WebGPUData<T>,
   { m, n, k }: { m: number; n: number; k: number },
 ) {
-  const type = ensureType(a.type, b.type, c.type);
+  const type = ensureDataType(a.type, b.type, c.type);
   const pipeline = await backend.register(shader(type));
   const uniform = await WebGPUData.from(
     backend,
@@ -20,9 +20,9 @@ export async function matmul<T extends DataType>(
     GPUBufferUsage.COPY_DST | GPUBufferUsage.UNIFORM,
   );
 
-  await backend.execute({
+  backend.execute(
     pipeline,
-    data: [a, b, c, uniform],
-    workgroups: [Math.ceil(n / 8), Math.ceil(m / 8), 1],
-  });
+    [Math.ceil(n / 8), Math.ceil(m / 8), 1],
+    [a, b, c, uniform],
+  );
 }

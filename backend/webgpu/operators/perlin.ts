@@ -1,6 +1,6 @@
 import { WebGPUBackend } from "../backend.ts";
 import { WebGPUData } from "../data.ts";
-import { perlin as shader } from "../shaders/perlin.ts";
+import shader from "../shaders/perlin.ts";
 
 export async function perlin(
   backend: WebGPUBackend,
@@ -10,12 +10,11 @@ export async function perlin(
   { m, n, k }: { m: number; n: number; k: number },
 ) {
   const pipeline = await backend.register(shader());
-
   const meta = await WebGPUData.from(backend, new Uint32Array([m, n, k]));
 
-  await backend.execute({
+  backend.execute(
     pipeline,
-    data: [a, b, c, meta],
-    workgroups: [Math.ceil(n / 8), Math.ceil(m / 8), 1],
-  });
+    [Math.ceil(n / 8), Math.ceil(m / 8), 1],
+    [a, b, c, meta],
+  );
 }

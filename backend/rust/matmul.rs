@@ -2,12 +2,12 @@ macro_rules! matmul_impl {
   ($identifier:ident, $type:ty) => {
     #[no_mangle]
     pub unsafe extern "C" fn $identifier(
-      a_data: *const $type,
-      b_data: *const $type,
-      c_data: *mut $type,
       m: usize,
       n: usize,
       k: usize,
+      a_data: *const $type,
+      b_data: *const $type,
+      c_data: *mut $type,
     ) {
       let a_len = m * k;
       let b_len = k * n;
