@@ -3,10 +3,12 @@ import { WasmData } from "./data.ts";
 
 const decoder = new TextDecoder();
 
-export class WasmBackend implements Backend<"wasm"> {
-  type = "wasm" as const;
+export class WasmBackend implements Backend {
+  readonly type = "wasm" as const;
   initalized = false;
   supported = true;
+
+  operators = new Map();
 
   instance!: WebAssembly.Instance;
   memory!: WebAssembly.Memory;

@@ -4,10 +4,12 @@ import { Backend } from "../types/backend.ts";
 import { WebGPUData } from "./data.ts";
 import { Workgroups } from "./types.ts";
 
-export class WebGPUBackend implements Backend<"webgpu"> {
+export class WebGPUBackend implements Backend {
   type = "webgpu" as const;
   initalized = false;
   supported = webgpu;
+
+  operators = new Map();
 
   adapter!: GPUAdapter;
   device!: GPUDevice;

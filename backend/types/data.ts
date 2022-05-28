@@ -1,4 +1,4 @@
-import { Backend, BackendType } from "./backend.ts";
+import { Backend } from "./backend.ts";
 
 export type DataPrimitive = "u32" | "i32" | "f32";
 export type DataPrimitiveArray<T extends DataPrimitive = DataPrimitive> =
@@ -34,25 +34,23 @@ export type DataTypeArray<D extends DataType = DataType> = DataPrimitiveArray<
 export type DataTypeArrayConstructor<D extends DataType = DataType> =
   DataPrimitiveArrayConstructor<D extends DataType<infer T> ? T : never>;
 
-export interface DataConstructor<
-  T extends DataType = DataType,
-  B extends BackendType = BackendType,
-> {
-  from<T extends DataType>(
-    backend: Backend<B>,
+export interface DataConstructor {
+  from<T extends DataType, B extends Backend>(
+    backend: B,
     source: DataTypeArray<T>,
     type?: T,
-  ): Promise<Data<T, B>>;
+  ): Promise<Data<T> & { backend: B }>;
 
-  new (backend: Backend<B>, type: T, length: number): Data<T, B>;
+  new <T extends DataType, B extends Backend>(
+    backend: B,
+    type: T,
+    length: number,
+  ): Data<T> & { backend: B };
 }
 
-export interface Data<
-  T extends DataType = DataType,
-  B extends BackendType = BackendType,
-> {
-  backend: Backend<B>;
-  type: T;
+export interface Data<T extends DataType = DataType> {
+  readonly backend: Backend;
+  readonly type: T;
   length: number;
 
   set(data: DataTypeArray<T>): Promise<void>;

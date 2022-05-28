@@ -2,29 +2,28 @@ import { Data, DataType, DataTypeArray } from "../types/data.ts";
 import { getDataTypeArrayConstructor } from "../util/data.ts";
 import { WasmBackend } from "./backend.ts";
 
-export class WasmData<T extends DataType = DataType>
-  implements Data<T, "wasm"> {
-  type: T;
-  backend: WasmBackend;
+export class WasmData<D extends DataType = DataType> implements Data<D> {
+  readonly type: D;
+  readonly backend: WasmBackend;
 
   active = true;
   length: number;
   size: number;
   ptr: number;
-  data: DataTypeArray<T>;
+  data: DataTypeArray<D>;
 
-  static async from<T extends DataType>(
+  static async from<D extends DataType>(
     backend: WasmBackend,
-    source: DataTypeArray<T>,
-    type?: T,
-  ): Promise<WasmData<T>> {
+    source: DataTypeArray<D>,
+    type?: D,
+  ): Promise<WasmData<D>> {
     // deno-fmt-ignore
     type = type ?? (
         source instanceof Uint32Array ? "u32"
       : source instanceof Int32Array ? "i32"
       : source instanceof Float32Array ? "f32"
       : undefined
-    ) as T;
+    ) as D;
     const data = new this(backend, type, source.length);
     await data.set(source);
     return data;
@@ -32,7 +31,7 @@ export class WasmData<T extends DataType = DataType>
 
   constructor(
     backend: WasmBackend,
-    type: T,
+    type: D,
     length: number,
   ) {
     const DataTypeArrayConstructor = getDataTypeArrayConstructor(type);
@@ -48,11 +47,11 @@ export class WasmData<T extends DataType = DataType>
       this.backend.memory.buffer,
       this.ptr,
       this.length,
-    ) as DataTypeArray<T>;
+    ) as DataTypeArray<D>;
   }
 
   // deno-lint-ignore require-await
-  async set(data: DataTypeArray<T>) {
+  async set(data: DataTypeArray<D>) {
     if (!this.active) {
       throw "WasmData is not active";
     }
@@ -61,12 +60,12 @@ export class WasmData<T extends DataType = DataType>
   }
 
   // deno-lint-ignore require-await
-  async get(): Promise<DataTypeArray<T>> {
+  async get(): Promise<DataTypeArray<D>> {
     if (!this.active) {
       throw "WasmData is not active";
     }
 
-    return this.data.slice() as DataTypeArray<T>;
+    return this.data.slice() as DataTypeArray<D>;
   }
 
   dispose(): void {

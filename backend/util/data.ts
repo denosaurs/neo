@@ -1,9 +1,13 @@
+import { BackendType } from "../types/backend.ts";
 import {
+  DataConstructor,
   DataPrimitive,
   DataPrimitiveArrayConstructor,
   DataType,
   DataTypeArrayConstructor,
 } from "../types/data.ts";
+import { WasmData } from "../wasm/data.ts";
+import { WebGPUData } from "../webgpu/data.ts";
 
 /**
  * Ensures that all {@link DataType}s match the {@link type} parameter
@@ -83,4 +87,16 @@ export function assertDataPrimitive(
   }
 
   throw new TypeError(`${type} is not of type DataPrimitive (u32 | i32 | f32)`);
+}
+
+/**
+ * A lookup table for the respective {@link BackendType}s {@link Data} constructors
+ */
+export const lookupDataConstructor = {
+  "wasm": WasmData,
+  "webgpu": WebGPUData,
+};
+
+export function getDataConstructorFor(type: BackendType) {
+  return lookupDataConstructor[type] as DataConstructor;
 }

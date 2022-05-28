@@ -1,21 +1,28 @@
-import { Data, DataType } from "./data.ts";
+import { Data } from "./data.ts";
 
-export type BackendType = "core" | "wasm" | "webgpu";
+export type BackendType = "wasm" | "webgpu";
 
-export interface BackendConstructor<T extends Backend<BackendType>> {
+export interface BackendConstructor<T extends Backend> {
   new (): T;
 }
 
-export interface Backend<B extends BackendType> {
-  type: B;
+export interface Backend {
+  readonly type: BackendType;
   initalized: boolean;
   supported: boolean;
+  operators: BackendOperators<this>;
 
   initialize(): Promise<void>;
 }
 
+export type BackendOperators<B extends Backend> = Map<
+  string,
+  BackendOperators<B>
+>;
+
 export type BackendOperator<
-  B extends BackendType,
-  D extends DataType,
+  B extends Backend,
+  D extends Data = Data,
   A extends Record<string, unknown> | undefined = undefined,
-> = (backend: Backend<B>, args: A, ...data: Data<D, B>[]) => Promise<void>;
+  R = void,
+> = (backend: B, data: D[], args: A) => Promise<R>;
