@@ -1,3 +1,4 @@
+import { BackendOperator } from "../../types/backend.ts";
 import { DataType } from "../../types/data.ts";
 import { ensureDataType } from "../../util/data.ts";
 import { WebGPUBackend } from "../backend.ts";
@@ -11,8 +12,7 @@ export function unary<T extends DataType>(
 
   return async function (
     backend: WebGPUBackend,
-    a: WebGPUData<T>,
-    b: WebGPUData<T>,
+    [a, b]: [WebGPUData<T>, WebGPUData<T>],
   ) {
     const type = ensureDataType(a.type, b.type);
     const pipeline = await backend.register(shader(type, exprfn(type)));
@@ -22,7 +22,10 @@ export function unary<T extends DataType>(
       [128],
       [a, b],
     );
-  };
+  } as BackendOperator<
+    WebGPUBackend,
+    [WebGPUData<T>, WebGPUData<T>]
+  >;
 }
 
 export const abs = unary("return abs(a);");

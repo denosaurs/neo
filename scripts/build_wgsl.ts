@@ -32,9 +32,9 @@ for await (
     await Deno.writeTextFile(
       output,
       "// Do not modify this file!\n" +
-      "// This file was automatically generated using `deno task build:wgsl`\n" +
-      `// Make changes to \`${basename(path)}\` instead and rebuild\n\n` +
-      source,
+        "// This file was automatically generated using `deno task build:wgsl`\n" +
+        `// Make changes to \`${basename(path)}\` instead and rebuild\n\n` +
+        source,
     );
   }
 }

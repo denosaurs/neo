@@ -1,3 +1,4 @@
+import { BackendOperator } from "../../types/backend.ts";
 import { DataType } from "../../types/data.ts";
 import { ensureDataType } from "../../util/data.ts";
 import { WasmBackend } from "../backend.ts";
@@ -6,12 +7,14 @@ import { WasmData } from "../data.ts";
 export function unary<T extends DataType>(func: string) {
   return function (
     backend: WasmBackend,
-    a: WasmData<T>,
-    b: WasmData<T>,
+    [a, b]: [WasmData<T>, WasmData<T>],
   ) {
     const type = ensureDataType(a.type, b.type);
     backend.execute(`${func}_${type}`, [a.length, a, b]);
-  };
+  } as BackendOperator<
+    WasmBackend,
+    [WasmData<T>, WasmData<T>]
+  >;
 }
 
 export const abs = unary<"f32" | "i32">("abs");

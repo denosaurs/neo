@@ -1,3 +1,4 @@
+import { BackendOperator } from "../../types/backend.ts";
 import { DataType } from "../../types/data.ts";
 import { ensureDataType } from "../../util/data.ts";
 import { WebGPUBackend } from "../backend.ts";
@@ -11,10 +12,7 @@ export function binary<T extends DataType>(
 
   return async function (
     backend: WebGPUBackend,
-    _: undefined,
-    a: WebGPUData<T>,
-    b: WebGPUData<T>,
-    c: WebGPUData<T>,
+    [a, b, c]: [WebGPUData<T>, WebGPUData<T>, WebGPUData<T>],
   ) {
     const type = ensureDataType(a.type, b.type, c.type);
     const pipeline = await backend.register(shader(type, exprfn(type)));
@@ -24,7 +22,10 @@ export function binary<T extends DataType>(
       [128],
       [a, b, c],
     );
-  };
+  } as BackendOperator<
+    WebGPUBackend,
+    [WebGPUData<T>, WebGPUData<T>, WebGPUData<T>]
+  >;
 }
 
 export const add = binary("return a + b;");

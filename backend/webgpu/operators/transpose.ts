@@ -1,13 +1,18 @@
+import { BackendOperator } from "../../types/backend.ts";
 import { DataType } from "../../types/data.ts";
 import { ensureDataType } from "../../util/data.ts";
 import { WebGPUBackend } from "../backend.ts";
 import { WebGPUData } from "../data.ts";
 import shader from "../shaders/transpose.ts";
 
-export async function transpose<T extends DataType>(
+export const transpose: BackendOperator<
+  WebGPUBackend,
+  [WebGPUData, WebGPUData],
+  { w: number; h: number },
+  Promise<void>
+> = async function transpose<T extends DataType>(
   backend: WebGPUBackend,
-  a: WebGPUData<T>,
-  b: WebGPUData<T>,
+  [a, b]: [WebGPUData<T>, WebGPUData<T>],
   { w, h }: { w: number; h: number },
 ) {
   const type = ensureDataType(a.type, b.type);
@@ -24,4 +29,4 @@ export async function transpose<T extends DataType>(
     [Math.ceil(w / 8), Math.ceil(h / 8), 1],
     [a, b, uniform],
   );
-}
+};

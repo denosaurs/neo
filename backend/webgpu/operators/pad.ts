@@ -1,13 +1,18 @@
+import { BackendOperator } from "../../types/backend.ts";
 import { DataType } from "../../types/data.ts";
 import { ensureDataType } from "../../util/data.ts";
 import { WebGPUBackend } from "../backend.ts";
 import { WebGPUData } from "../data.ts";
 import shader from "../shaders/pad.ts";
 
-export async function pad<T extends DataType>(
+export const pad: BackendOperator<
+  WebGPUBackend,
+  [WebGPUData, WebGPUData],
+  { w: number; h: number; t: number },
+  Promise<void>
+> = async function pad<T extends DataType>(
   backend: WebGPUBackend,
-  a: WebGPUData<T>,
-  b: WebGPUData<T>,
+  [a, b]: [WebGPUData<T>, WebGPUData<T>],
   { w, h, t }: { w: number; h: number; t: number },
 ) {
   const type = ensureDataType(a.type, b.type);
@@ -24,4 +29,4 @@ export async function pad<T extends DataType>(
     [Math.ceil(w / 8), Math.ceil(h / 8), 1],
     [a, b, uniform],
   );
-}
+};

@@ -1,3 +1,4 @@
+import { BackendOperator } from "../../types/backend.ts";
 import { DataType } from "../../types/data.ts";
 import { ensureDataType } from "../../util/data.ts";
 import { WasmBackend } from "../backend.ts";
@@ -6,13 +7,14 @@ import { WasmData } from "../data.ts";
 export function binary<T extends DataType>(func: string) {
   return function (
     backend: WasmBackend,
-    a: WasmData<T>,
-    b: WasmData<T>,
-    c: WasmData<T>,
+    [a, b, c]: [WasmData<T>, WasmData<T>, WasmData<T>],
   ) {
     const type = ensureDataType(a.type, b.type, c.type);
     backend.execute(`${func}_${type}`, [a.length, a, b, c]);
-  };
+  } as BackendOperator<
+    WasmBackend,
+    [WasmData<T>, WasmData<T>, WasmData<T>]
+  >;
 }
 
 export const add = binary<"f32" | "u32" | "i32">("add");
