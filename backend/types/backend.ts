@@ -22,7 +22,7 @@ export type BackendOperators<B extends Backend> = Map<
 
 export type BackendOperator<
   B extends Backend,
-  D extends Data = Data,
-  A extends Record<string, unknown> | undefined = undefined,
+  D extends Data[],
+  A extends Record<string, unknown> | undefined,
   R = void,
-> = (backend: B, data: D[], args: A) => Promise<R>;
+> = (backend: B, data: D, args: A) => R;

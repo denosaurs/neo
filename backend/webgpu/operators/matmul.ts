@@ -1,14 +1,21 @@
-import { DataType } from "../../types/data.ts";
+import { BackendOperator } from "../../types/backend.ts";
 import { ensureDataType } from "../../util/data.ts";
 import { WebGPUBackend } from "../backend.ts";
 import { WebGPUData } from "../data.ts";
 import shader from "../shaders/matmul.ts";
 
-export async function matmul<T extends DataType>(
+export const matmul: BackendOperator<
+  WebGPUBackend,
+  [
+    WebGPUData<"f32" | "u32" | "i32">,
+    WebGPUData<"f32" | "u32" | "i32">,
+    WebGPUData<"f32" | "u32" | "i32">,
+  ],
+  { m: number; n: number; k: number },
+  Promise<void>
+> = async function matmul<T extends "f32" | "u32" | "i32">(
   backend: WebGPUBackend,
-  a: WebGPUData<T>,
-  b: WebGPUData<T>,
-  c: WebGPUData<T>,
+  [a, b, c]: [WebGPUData<T>, WebGPUData<T>, WebGPUData<T>],
   { m, n, k }: { m: number; n: number; k: number },
 ) {
   const type = ensureDataType(a.type, b.type, c.type);
@@ -25,4 +32,4 @@ export async function matmul<T extends DataType>(
     [Math.ceil(n / 8), Math.ceil(m / 8), 1],
     [a, b, c, uniform],
   );
-}
+};

@@ -64,13 +64,13 @@ export class Core {
 
 export async function operatorOnBackend<
   B extends Backend,
-  D extends Data = Data,
-  A extends Record<string, unknown> | undefined = undefined,
+  D extends Data[],
+  A extends Record<string, unknown> | undefined,
   R = void,
 >(
   backend: B,
   operator: BackendOperator<B, D, A, R>,
-  data: Data[],
+  data: Data<D extends Data<infer T>[] ? T : never>[],
   args: A,
 ): Promise<R> {
   const DataConstructor = getDataConstructorFor(backend.type);
@@ -99,7 +99,7 @@ export async function operatorOnBackend<
 
   const operatorData = convertedData.map((data) =>
     Array.isArray(data) ? data[1] : data
-  ) as D[];
+  ) as D;
   const result = await operator(backend, operatorData, args);
 
   // Deconvert the converted data to its original form in case all of the data does not share the same backend type

@@ -1,29 +1,50 @@
-import { Data, DataType, DataTypeArray } from "../types/data.ts";
+import {
+  Data,
+  DataType,
+  DataTypeArray,
+  DataTypeArrayConstructor,
+} from "../types/data.ts";
 import { getDataTypeArrayConstructor } from "../util/data.ts";
 import { WasmBackend } from "./backend.ts";
 
-export class WasmData<D extends DataType = DataType> implements Data<D> {
-  readonly type: D;
+export class WasmData<T extends DataType = DataType> implements Data<T> {
+  #DataTypeArrayConstructor: DataTypeArrayConstructor<T>;
+  #data: DataTypeArray<T>;
+
+  readonly type: T;
   readonly backend: WasmBackend;
 
   active = true;
   length: number;
   size: number;
   ptr: number;
-  data: DataTypeArray<D>;
 
-  static async from<D extends DataType>(
+  get data(): DataTypeArray<T> {
+    if (
+      this.#data === null || this.#data.buffer !== this.backend.memory.buffer
+    ) {
+      this.#data = new this.#DataTypeArrayConstructor(
+        this.backend.memory.buffer,
+        this.ptr,
+        this.length,
+      ) as DataTypeArray<T>;
+    }
+
+    return this.#data;
+  }
+
+  static async from<T extends DataType>(
     backend: WasmBackend,
-    source: DataTypeArray<D>,
-    type?: D,
-  ): Promise<WasmData<D>> {
+    source: DataTypeArray<T>,
+    type?: T,
+  ): Promise<WasmData<T>> {
     // deno-fmt-ignore
     type = type ?? (
         source instanceof Uint32Array ? "u32"
       : source instanceof Int32Array ? "i32"
       : source instanceof Float32Array ? "f32"
       : undefined
-    ) as D;
+    ) as T;
     const data = new this(backend, type, source.length);
     await data.set(source);
     return data;
@@ -31,27 +52,27 @@ export class WasmData<D extends DataType = DataType> implements Data<D> {
 
   constructor(
     backend: WasmBackend,
-    type: D,
+    type: T,
     length: number,
   ) {
-    const DataTypeArrayConstructor = getDataTypeArrayConstructor(type);
+    this.#DataTypeArrayConstructor = getDataTypeArrayConstructor(type);
 
     this.backend = backend;
     this.type = type;
     this.length = length;
     this.size = this.length *
-      DataTypeArrayConstructor.BYTES_PER_ELEMENT;
+      this.#DataTypeArrayConstructor.BYTES_PER_ELEMENT;
 
     this.ptr = this.backend.alloc(this.size);
-    this.data = new DataTypeArrayConstructor(
+    this.#data = new this.#DataTypeArrayConstructor(
       this.backend.memory.buffer,
       this.ptr,
       this.length,
-    ) as DataTypeArray<D>;
+    ) as DataTypeArray<T>;
   }
 
   // deno-lint-ignore require-await
-  async set(data: DataTypeArray<D>) {
+  async set(data: DataTypeArray<T>) {
     if (!this.active) {
       throw "WasmData is not active";
     }
@@ -60,12 +81,12 @@ export class WasmData<D extends DataType = DataType> implements Data<D> {
   }
 
   // deno-lint-ignore require-await
-  async get(): Promise<DataTypeArray<D>> {
+  async get(): Promise<DataTypeArray<T>> {
     if (!this.active) {
       throw "WasmData is not active";
     }
 
-    return this.data.slice() as DataTypeArray<D>;
+    return this.data.slice() as DataTypeArray<T>;
   }
 
   dispose(): void {

@@ -22,7 +22,7 @@ export class WasmBackend implements Backend {
     }
 
     const { source } = await import("./wasm.js");
-    const { instance: { exports } } = await WebAssembly.instantiate(source, {
+    const { instance } = await WebAssembly.instantiate(source, {
       env: {
         panic: (ptr: number, len: number) => {
           const msg = decoder.decode(
@@ -32,9 +32,10 @@ export class WasmBackend implements Backend {
         },
       },
     });
-    this.memory = exports.memory as WebAssembly.Memory;
-    this.alloc = exports.alloc as (size: number) => number;
-    this.dealloc = exports.dealloc as (
+    this.instance = instance;
+    this.memory = instance.exports.memory as WebAssembly.Memory;
+    this.alloc = instance.exports.alloc as (size: number) => number;
+    this.dealloc = instance.exports.dealloc as (
       ptr: number,
       size: number,
     ) => void;
