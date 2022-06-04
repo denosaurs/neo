@@ -55,7 +55,7 @@ export const selu = unary<"f32">(
   `if (a < 0.0) {
     return 1.67 * (pow(1.67326, a) - 1.0);
    }
-   return a;`
+   return a;`,
 );
 export const sin = unary<"f32">("return sin(a);");
 export const sinh = unary<"f32">(`
