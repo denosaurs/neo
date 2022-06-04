@@ -51,6 +51,12 @@ export const cosh = unary<"f32">(`
   let e2x = exp(-a);
   return (e2x + 1.0 / e2x) / 2.0;
 `);
+export const selu = unary<"f32">(
+  `if (a < 0.0) {
+    return 1.67 * (pow(1.67326, a) - 1.0);
+   }
+   return a;`
+);
 export const sin = unary<"f32">("return sin(a);");
 export const sinh = unary<"f32">(`
   let e2x = exp(a);
@@ -74,4 +80,9 @@ export const log = unary<"f32">(`
   }
   return log(a);
 `);
-// export const leakyrelu = unary<"f32" | "i32">((type) => `if (a < 0${type}) { return uniforms.alpha * a; } return a;`);
+export const leakyrelu = unary<"f32" | "i32">((type) =>
+  `if (a < 0${type}) {
+     return  ${type}(f32(a) * 0.01); 
+   } 
+   return a;`
+);

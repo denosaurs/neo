@@ -29,6 +29,7 @@ export const floor = unary<"f32">("floor");
 export const round = unary<"f32">("round");
 export const sqrt = unary<"f32">("sqrt");
 export const rsqrt = unary<"f32">("rsqrt");
+export const selu = unary<"f32">("selu");
 export const sigmoid = unary<"f32">("sigmoid");
 export const square = unary<"f32" | "u32" | "i32">("square");
 export const cos = unary<"f32">("cos");
