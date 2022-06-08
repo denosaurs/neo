@@ -7,13 +7,23 @@ import shader from "../shaders/binary.ts";
 
 export function binary<T extends DataType>(
   expr: ((type: DataType) => string) | string,
-) {
+): BackendOperator<
+  WebGPUBackend,
+  [
+    WebGPUData<T>,
+    WebGPUData<T>,
+    WebGPUData<T>,
+  ],
+  undefined,
+  Promise<void>
+> {
   const exprfn = typeof expr === "string" ? ((_type: DataType) => expr) : expr;
 
   return async function (
     backend: WebGPUBackend,
     [a, b, c]: [WebGPUData<T>, WebGPUData<T>, WebGPUData<T>],
-  ) {
+    _args: undefined,
+  ): Promise<void> {
     const type = ensureDataType(a.type, b.type, c.type);
     const pipeline = await backend.register(shader(type, exprfn(type)));
 
@@ -22,10 +32,7 @@ export function binary<T extends DataType>(
       [128],
       [a, b, c],
     );
-  } as BackendOperator<
-    WebGPUBackend,
-    [WebGPUData<T>, WebGPUData<T>, WebGPUData<T>]
-  >;
+  };
 }
 
 export const add = binary("return a + b;");

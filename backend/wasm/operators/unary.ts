@@ -19,7 +19,7 @@ export function unary<T extends DataType>(func: string) {
 
 export const abs = unary<"f32" | "i32">("abs");
 export const linear = unary<"f32" | "u32" | "i32">("linear");
-export const neg = unary<"f32" | "u32" | "i32">("neg");
+export const neg = unary<"f32" | "i32">("neg");
 export const inc = unary<"f32" | "u32" | "i32">("inc");
 export const dec = unary<"f32" | "u32" | "i32">("dec");
 export const relu = unary<"f32" | "i32">("relu");

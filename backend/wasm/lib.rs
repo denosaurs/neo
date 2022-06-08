@@ -5,7 +5,6 @@ extern crate alloc;
 extern crate wee_alloc;
 
 pub use neo_rust;
-// pub mod matmul;
 
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;

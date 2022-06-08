@@ -12,11 +12,13 @@
     "build": "deno task build:wasm && deno task build:wgsl",
     "build:wasm": "deno run --allow-run --allow-read --allow-write scripts/build_wasm.ts neo_wasm backend/wasm/wasm.js",
     "build:wgsl": "deno run --allow-read --allow-write scripts/build_wgsl.ts \"backend/webgpu/shaders/*\"",
-    "bench": "deno bench -A --unstable benchmarks/matmul.ts"
+    "bench": "deno bench -A --unstable benchmarks/matmul.ts && deno bench -A --unstable benchmarks/unary.ts && deno bench -A --unstable benchmarks/binary.ts"
   },
   "fmt": {
     "files": {
-      "exclude": ["target/"]
+      "exclude": [
+        "target/"
+      ]
     }
   }
 }

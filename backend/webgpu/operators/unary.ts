@@ -7,7 +7,15 @@ import shader from "../shaders/unary.ts";
 
 export function unary<T extends DataType>(
   expr: ((type: DataType) => string) | string,
-) {
+): BackendOperator<
+  WebGPUBackend,
+  [
+    WebGPUData<T>,
+    WebGPUData<T>,
+  ],
+  undefined,
+  Promise<void>
+> {
   const exprfn = typeof expr === "string" ? ((_type: DataType) => expr) : expr;
 
   return async function (
@@ -22,10 +30,7 @@ export function unary<T extends DataType>(
       [128],
       [a, b],
     );
-  } as BackendOperator<
-    WebGPUBackend,
-    [WebGPUData<T>, WebGPUData<T>]
-  >;
+  };
 }
 
 export const abs = unary("return abs(a);");
