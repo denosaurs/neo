@@ -1,28 +1,37 @@
-import { DataType } from "../../types.ts";
-import { ensureType } from "../../util.ts";
+import { BackendOperator } from "../../types/backend.ts";
+import { DataType } from "../../types/data.ts";
+import { ensureDataType } from "../../util/data.ts";
 import { WebGPUBackend } from "../backend.ts";
 import { WebGPUData } from "../data.ts";
-import { binary as shader } from "../shaders/binary.ts";
+import shader from "../shaders/binary.ts";
 
 export function binary<T extends DataType>(
   expr: ((type: DataType) => string) | string,
-) {
+): BackendOperator<
+  WebGPUBackend,
+  [
+    WebGPUData<T>,
+    WebGPUData<T>,
+    WebGPUData<T>,
+  ],
+  undefined,
+  Promise<void>
+> {
   const exprfn = typeof expr === "string" ? ((_type: DataType) => expr) : expr;
 
   return async function (
     backend: WebGPUBackend,
-    a: WebGPUData<T>,
-    b: WebGPUData<T>,
-    c: WebGPUData<T>,
-  ) {
-    const type = ensureType(a.type, b.type, c.type);
+    [a, b, c]: [WebGPUData<T>, WebGPUData<T>, WebGPUData<T>],
+    _args: undefined,
+  ): Promise<void> {
+    const type = ensureDataType(a.type, b.type, c.type);
     const pipeline = await backend.register(shader(type, exprfn(type)));
 
-    await backend.execute({
+    backend.execute(
       pipeline,
-      data: [a, b, c],
-      workgroups: [128],
-    });
+      [128],
+      [a, b, c],
+    );
   };
 }
 

@@ -2,9 +2,9 @@ macro_rules! unary_operator {
   ($identifier:ident, $type:ty, $closure:expr) => {
     #[no_mangle]
     pub unsafe extern "C" fn $identifier(
+      len: usize,
       a_data: *const $type,
       b_data: *mut $type,
-      len: usize,
     ) {
       let a_data = &core::slice::from_raw_parts(a_data, len)[..len];
       let b_data = &mut core::slice::from_raw_parts_mut(b_data, len)[..len];

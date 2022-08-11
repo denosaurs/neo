@@ -1,19 +1,14 @@
-import { Backend, BackendRequest, DataType } from "../types.ts";
+import { Backend } from "../types/backend.ts";
 import { WasmData } from "./data.ts";
 
 const decoder = new TextDecoder();
 
-export interface WasmBackendRequest<T extends DataType = DataType>
-  extends BackendRequest<T> {
-  func: string;
-  args: number[];
-  data: WasmData<T>[];
-}
-
 export class WasmBackend implements Backend {
-  type = "wasm" as const;
+  readonly type = "wasm" as const;
   initalized = false;
   supported = true;
+
+  operators = new Map();
 
   instance!: WebAssembly.Instance;
   memory!: WebAssembly.Memory;
@@ -27,7 +22,7 @@ export class WasmBackend implements Backend {
     }
 
     const { source } = await import("./wasm.js");
-    const { instance: { exports } } = await WebAssembly.instantiate(source, {
+    const { instance } = await WebAssembly.instantiate(source, {
       env: {
         panic: (ptr: number, len: number) => {
           const msg = decoder.decode(
@@ -37,9 +32,10 @@ export class WasmBackend implements Backend {
         },
       },
     });
-    this.memory = exports.memory as WebAssembly.Memory;
-    this.alloc = exports.alloc as (size: number) => number;
-    this.dealloc = exports.dealloc as (
+    this.instance = instance;
+    this.memory = instance.exports.memory as WebAssembly.Memory;
+    this.alloc = instance.exports.alloc as (size: number) => number;
+    this.dealloc = instance.exports.dealloc as (
       ptr: number,
       size: number,
     ) => void;
@@ -47,21 +43,19 @@ export class WasmBackend implements Backend {
     this.initalized = true;
   }
 
-  // deno-lint-ignore require-await
-  async execute(request: WasmBackendRequest): Promise<void> {
+  execute(name: string, args: (WasmData | number | bigint)[]) {
     if (!this.initalized) {
       throw new Error("WasmBackend is not initialized");
     }
 
-    const func = this.instance
-      .exports[request.func] as (((...args: unknown[]) => unknown) | undefined);
+    const func = this.instance.exports[name] as (
+      ...args: (number | bigint)[]
+    ) => (number | bigint) | undefined;
 
     if (func === undefined) {
-      throw new Error(`Could not find wasm function ${request.func}`);
+      throw new Error(`Missing wasm export with name of ${name}`);
     }
 
-    const args = request.data.map((data) => data.ptr).concat(request.args);
-
-    func(...args);
+    return func(...args.map((arg) => arg instanceof WasmData ? arg.ptr : arg));
   }
 }

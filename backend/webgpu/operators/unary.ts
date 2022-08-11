@@ -1,27 +1,35 @@
-import { DataType } from "../../types.ts";
-import { ensureType } from "../../util.ts";
+import { BackendOperator } from "../../types/backend.ts";
+import { DataType } from "../../types/data.ts";
+import { ensureDataType } from "../../util/data.ts";
 import { WebGPUBackend } from "../backend.ts";
 import { WebGPUData } from "../data.ts";
-import { unary as shader } from "../shaders/unary.ts";
+import shader from "../shaders/unary.ts";
 
 export function unary<T extends DataType>(
   expr: ((type: DataType) => string) | string,
-) {
+): BackendOperator<
+  WebGPUBackend,
+  [
+    WebGPUData<T>,
+    WebGPUData<T>,
+  ],
+  undefined,
+  Promise<void>
+> {
   const exprfn = typeof expr === "string" ? ((_type: DataType) => expr) : expr;
 
   return async function (
     backend: WebGPUBackend,
-    a: WebGPUData<T>,
-    b: WebGPUData<T>,
+    [a, b]: [WebGPUData<T>, WebGPUData<T>],
   ) {
-    const type = ensureType(a.type, b.type);
+    const type = ensureDataType(a.type, b.type);
     const pipeline = await backend.register(shader(type, exprfn(type)));
 
-    await backend.execute({
+    backend.execute(
       pipeline,
-      data: [a, b],
-      workgroups: [128],
-    });
+      [128],
+      [a, b],
+    );
   };
 }
 
@@ -48,6 +56,12 @@ export const cosh = unary<"f32">(`
   let e2x = exp(-a);
   return (e2x + 1.0 / e2x) / 2.0;
 `);
+export const selu = unary<"f32">(
+  `if (a < 0.0) {
+    return 1.67 * (pow(1.67326, a) - 1.0);
+   }
+   return a;`,
+);
 export const sin = unary<"f32">("return sin(a);");
 export const sinh = unary<"f32">(`
   let e2x = exp(a);
@@ -71,4 +85,9 @@ export const log = unary<"f32">(`
   }
   return log(a);
 `);
-// export const leakyrelu = unary<"f32" | "i32">((type) => `if (a < 0${type}) { return uniforms.alpha * a; } return a;`);
+export const leakyrelu = unary<"f32" | "i32">((type) =>
+  `if (a < 0${type}) {
+     return  ${type}(f32(a) * 0.01); 
+   } 
+   return a;`
+);

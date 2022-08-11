@@ -9,12 +9,16 @@
     "lint": "deno task lint:deno && deno task lint:rust",
     "lint:deno": "deno lint --unstable",
     "lint:rust": "cargo clippy --target wasm32-unknown-unknown --release -- -D clippy::all -A clippy::missing_safety_doc -A clippy::undocumented_unsafe_blocks",
-    "build": "deno task build:wasm",
-    "build:wasm": "deno run --allow-run --allow-read --allow-write scripts/build_wasm.ts neo_wasm backend/wasm/wasm.js"
+    "build": "deno task build:wasm && deno task build:wgsl",
+    "build:wasm": "deno run --allow-run --allow-read --allow-write scripts/build_wasm.ts neo_wasm backend/wasm/wasm.js",
+    "build:wgsl": "deno run --allow-read --allow-write scripts/build_wgsl.ts \"backend/webgpu/shaders/*\"",
+    "bench": "deno bench -A --unstable benchmarks/matmul.ts && deno bench -A --unstable benchmarks/transpose.ts && deno bench -A --unstable benchmarks/unary.ts && deno bench -A --unstable benchmarks/binary.ts"
   },
   "fmt": {
     "files": {
-      "exclude": ["target/"]
+      "exclude": [
+        "target/"
+      ]
     }
   }
 }

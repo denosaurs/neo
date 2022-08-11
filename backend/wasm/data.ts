@@ -1,20 +1,41 @@
-import { Data, DataArray, DataArrayConstructor, DataType } from "../types.ts";
-import { getType } from "../util.ts";
+import {
+  Data,
+  DataType,
+  DataTypeArray,
+  DataTypeArrayConstructor,
+} from "../types/data.ts";
+import { getDataTypeArrayConstructor } from "../util/data.ts";
 import { WasmBackend } from "./backend.ts";
 
 export class WasmData<T extends DataType = DataType> implements Data<T> {
-  type: T;
-  backend: WasmBackend;
+  #DataTypeArrayConstructor: DataTypeArrayConstructor<T>;
+  #data: DataTypeArray<T>;
+
+  readonly type: T;
+  readonly backend: WasmBackend;
 
   active = true;
   length: number;
   size: number;
   ptr: number;
-  data: DataArray<T>;
+
+  get data(): DataTypeArray<T> {
+    if (
+      this.#data === null || this.#data.buffer !== this.backend.memory.buffer
+    ) {
+      this.#data = new this.#DataTypeArrayConstructor(
+        this.backend.memory.buffer,
+        this.ptr,
+        this.length,
+      ) as DataTypeArray<T>;
+    }
+
+    return this.#data;
+  }
 
   static async from<T extends DataType>(
     backend: WasmBackend,
-    source: DataArray<T>,
+    source: DataTypeArray<T>,
     type?: T,
   ): Promise<WasmData<T>> {
     // deno-fmt-ignore
@@ -34,25 +55,24 @@ export class WasmData<T extends DataType = DataType> implements Data<T> {
     type: T,
     length: number,
   ) {
-    const Constructor =
-      DataArrayConstructor[getType(type)] as DataArrayConstructor<T>;
+    this.#DataTypeArrayConstructor = getDataTypeArrayConstructor(type);
 
     this.backend = backend;
     this.type = type;
     this.length = length;
     this.size = this.length *
-      Constructor.BYTES_PER_ELEMENT;
+      this.#DataTypeArrayConstructor.BYTES_PER_ELEMENT;
 
     this.ptr = this.backend.alloc(this.size);
-    this.data = new Constructor(
+    this.#data = new this.#DataTypeArrayConstructor(
       this.backend.memory.buffer,
       this.ptr,
       this.length,
-    ) as DataArray<T>;
+    ) as DataTypeArray<T>;
   }
 
   // deno-lint-ignore require-await
-  async set(data: DataArray<T>) {
+  async set(data: DataTypeArray<T>) {
     if (!this.active) {
       throw "WasmData is not active";
     }
@@ -61,12 +81,12 @@ export class WasmData<T extends DataType = DataType> implements Data<T> {
   }
 
   // deno-lint-ignore require-await
-  async get(): Promise<DataArray<T>> {
+  async get(): Promise<DataTypeArray<T>> {
     if (!this.active) {
       throw "WasmData is not active";
     }
 
-    return this.data.slice() as DataArray<T>;
+    return this.data.slice() as DataTypeArray<T>;
   }
 
   dispose(): void {

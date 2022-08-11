@@ -1,22 +1,19 @@
-import { DataType } from "../../types.ts";
-import { ensureType } from "../../util.ts";
+import { BackendOperator } from "../../types/backend.ts";
+import { DataType } from "../../types/data.ts";
+import { ensureDataType } from "../../util/data.ts";
 import { WasmBackend } from "../backend.ts";
 import { WasmData } from "../data.ts";
 
-export function binary<T extends DataType>(func: string) {
-  return async function (
+export function binary<T extends DataType>(func: string): BackendOperator<
+  WasmBackend,
+  [WasmData<T>, WasmData<T>, WasmData<T>]
+> {
+  return function (
     backend: WasmBackend,
-    a: WasmData<T>,
-    b: WasmData<T>,
-    c: WasmData<T>,
+    [a, b, c]: [WasmData<T>, WasmData<T>, WasmData<T>],
   ) {
-    const type = ensureType(a.type, b.type, c.type);
-
-    await backend.execute({
-      func: `${func}_${type}`,
-      args: [a.length],
-      data: [a, b, c],
-    });
+    const type = ensureDataType(a.type, b.type, c.type);
+    backend.execute(`${func}_${type}`, [a.length, a, b, c]);
   };
 }
 

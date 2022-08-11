@@ -1,12 +1,24 @@
-# neo
+<p align="center">
+ <img src="./assets/neo.svg" width="80rem" />
+ <br/>
+ <h1 align="center">neo</h1>
+</p>
 
-[![Tags](https://img.shields.io/github/release/denosaurs/neo)](https://github.com/denosaurs/neo/releases)
-[![CI Status](https://img.shields.io/github/workflow/status/denosaurs/neo/check)](https://github.com/denosaurs/neo/actions)
-[![Dependencies](https://img.shields.io/github/workflow/status/denosaurs/neo/depsbot?label=dependencies)](https://github.com/denosaurs/depsbot)
-[![License](https://img.shields.io/github/license/denosaurs/neo)](https://github.com/denosaurs/neo/blob/main/LICENSE)
+<p align="center">
+  <a href="https://github.com/denosaurs/neo/releases">
+    <img alt="GitHub release (latest by date including pre-releases)" src="https://img.shields.io/github/v/release/denosaurs/neo?include_prereleases" />
+  </a>
+  <a href="https://github.com/denosaurs/neo/actions">
+    <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/denosaurs/neo/check" />
+  </a>
+  <a href="https://github.com/denosaurs/neo/blob/main/LICENSE">
+    <img alt="License" src="https://img.shields.io/github/license/denosaurs/neo" />
+  </a>
+</p>
 
-`neo` is a module for working with matrices and other linear algebra,
-accelerated using WebGPU.
+`neo` is the module for working with matrices, ndarrays, tensors and linear
+algebra in deno. Accelerated using WebGPU and WASM it runs anywhere a browser
+runs.
 
 ## Maintainers
 
