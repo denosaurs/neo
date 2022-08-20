@@ -47,6 +47,7 @@ export class WebGPUBackend implements Backend {
     const module = this.device.createShaderModule({ code });
     const pipeline = await this.device.createComputePipelineAsync({
       compute: { module, entryPoint: "main" },
+      layout: "auto",
     });
     const layout = pipeline.getBindGroupLayout(0);
 
@@ -75,8 +76,8 @@ export class WebGPUBackend implements Backend {
     const passEncoder = commandEncoder.beginComputePass();
     passEncoder.setBindGroup(0, bindgroup);
     passEncoder.setPipeline(pipeline);
-    passEncoder.dispatch(...workgroups as [number, number, number]);
-    passEncoder.endPass();
+    passEncoder.dispatchWorkgroups(...workgroups as [number, number, number]);
+    passEncoder.end();
 
     this.device.queue.submit([commandEncoder.finish()]);
   }
