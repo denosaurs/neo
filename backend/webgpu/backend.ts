@@ -47,7 +47,7 @@ export class WebGPUBackend implements Backend {
     const module = this.device.createShaderModule({ code });
     const pipeline = await this.device.createComputePipelineAsync({
       compute: { module, entryPoint: "main" },
-      layout: "auto"
+      layout: "auto",
     });
     const layout = pipeline.getBindGroupLayout(0);
 

@@ -4,7 +4,7 @@
 
 import { DataType } from "../../types/data.ts";
 
-export default (type: DataType) => `
+export default (type: DataType) => `
   // #import "prelude.wgsl"
 var<private> e: f32 = 2.718281828459045;
 var<private> pi: f32 = 3.141592653589793;
