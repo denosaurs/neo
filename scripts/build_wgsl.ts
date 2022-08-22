@@ -4,8 +4,8 @@ import {
   globToRegExp,
   parse,
   resolve,
-} from "https://deno.land/std@0.140.0/path/mod.ts";
-import { walk } from "https://deno.land/std@0.140.0/fs/mod.ts";
+} from "https://deno.land/std@0.152.0/path/mod.ts";
+import { walk } from "https://deno.land/std@0.152.0/fs/mod.ts";
 import { createTypeScript, preprocess } from "./wgsl_preprocess.ts";
 
 const glob = globToRegExp(Deno.args[0]);

@@ -2,7 +2,7 @@ import {
   dirname,
   relative,
   resolve,
-} from "https://deno.land/std@0.140.0/path/mod.ts";
+} from "https://deno.land/std@0.152.0/path/mod.ts";
 
 function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
