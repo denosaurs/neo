@@ -33,7 +33,7 @@ for (let i = 64; i < 128; i += 8) {
     a.dispose();
     b.dispose();
   });
-  // WASM
+  // Wasm
   Deno.bench(`wasm ${i} * ${i}`, {
     group: `${i} * ${i}`,
   }, async () => {

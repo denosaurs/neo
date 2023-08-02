@@ -17,7 +17,7 @@
 </p>
 
 `neo` is the module for working with matrices, ndarrays, tensors and linear
-algebra in deno. Accelerated using WebGPU and WASM it runs anywhere a browser
+algebra in deno. Accelerated using WebGPU and Wasm it runs anywhere a browser
 runs.
 
 ## Maintainers
